@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Dark Onyx: Lost Place</title>
+<script>
+var speed = 50; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "HEADACHE";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+    if (i >= txt.length) {
+      return;
+    }
+  }
+}
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+function display (selected) {
+  if (selected == 'basic') {
+    document.getElementById("w3w").style.display = "block";
+    document.getElementById("extended").style.display = "block";
+    return;
+  }
+  else if (selected == 'extended') {
+    texttoshow = "The 3 hint words were: rainbow, toothpaste, dart. Find an order of these 3 that lands on a road with a name.";
+    document.getElementById("answer").style.display = "block";
+  }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+  addMaterial(selected, texttoshow);
+
+  }
+
+</script>
+
+</head>
+<body>
+  <h1>Dark Onyx: Lost Place</h1>
+  <button id="basic" onclick = "display('basic')">Show basic hint</button> <br/><br/>
+  <a id="w3w" href="https://what3words.com" style="display:none">What 3 Words</a><br>
+  <button id="extended"  style="display:none" onclick = "display('extended')">Show extended hint</button><br>
+  <button id="answer"  style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/>
+  <div id="word"></div>
+</body>
+</html>
