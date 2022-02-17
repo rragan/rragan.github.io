@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Dark Onyx: Last Chance</title>
+<script>
+var speed = 500; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "ATOMIC";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+
+function display (selected) {
+    if (selected == 'extended') {
+    texttoshow = 'This uses the Knock or Tap Code. ';
+    addMaterial(selected, texttoshow);
+    document.getElementById("taplink").style.display = "block";
+    document.getElementById("inform").style.display = "block";
+    document.getElementById("answer").style.display = "block";
+
+    return;
+    }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+
+} 
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+</script>
+
+</head>
+<body>
+  <h1>Dark Onyx: Last Chance</h1>
+  <h2>Basic Hint: Listen to </h2> <audio controls>
+  <source src="tap2x.wav" type="audio/wav">
+Your browser does not support the audio element.
+</audio>
+<br/><br/>
+  <button id="extended" onclick = "display('extended')">Show extended hint</button><br/><br/>
+  <a id="taplink"  style="display:none" href="https://en.wikipedia.org/wiki/Tap_code" style="display:none">Tap Code Explained</a><br>
+  <img  id="inform" style="display:none" id="tapcode" src="tapcode.png"/>
+  <button id="answer" style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/>
+  <div id="word"></div>
+</body>
+</html>
