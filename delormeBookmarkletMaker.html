@@ -1,0 +1,69 @@
+
+<h3>Generate DeLorme State Bookmarklet</h3>
+
+<form onsubmit="return getState();">
+<b>Select state</b><br/>
+	<div id="stateList"></div>
+	<input type="submit" name="submit" value="submit"/>
+</form>
+<div id="bm"></div>
+
+<script>
+var id = "";
+function getState() {
+	let list = document.getElementById("stateSelect");
+	id = list[list.selectedIndex].value;
+    var pagesUrl = "https://raw.githubusercontent.com/rragan/DeLormeGridOverlay/main/gridData/" + id + ".json";
+	fetchDataJSON(pagesUrl).then(pages => {
+		//get grid data for the state
+		  pages; // fetched data
+		  var str = JSON.stringify(pages);
+		  str = str.replace('{"grid":', "var grid=");
+		  //str = str.replace(',"state":"' + id + '"};', ';');
+		  str = str.replace(',"state":"'+id+'"}', ';var id="'+id+'";');
+		  //console.log(str);
+		  // get base logic for bookkmarklet
+		  var baseCodeUrl = "https://raw.githubusercontent.com/rragan/DeLormeChecker/main/Base_Bookmarklet_logic";
+		  fetchBaseCode(baseCodeUrl).then(code => {
+		    var bookmarklet = 'function(){'+ encodeURIComponent(str + code) + '})';
+		    bookmarklet = 'javascript:(' + bookmarklet + '()';
+		    var linkedBM = document.getElementById("bm");
+		    linkedBM.innerHTML = "";
+		    var linkInstall = 'Drag to bookmarklet bar in browser: <a href="' + bookmarklet + '">' + id + ' Delorme</a>';
+		    linkedBM.insertAdjacentHTML('afterbegin', linkInstall);
+		  });
+    });
+    return false;
+}
+
+    async function fetchBaseCode(url) {
+      const response = await fetch(url);
+      const data = await response;
+      return data.text();
+    }
+    async function fetchDataJSON(url) {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    }
+
+	// Get list of states for dropdown
+    var statesListUrl = "https://raw.githubusercontent.com/rragan/DeLormeGridOverlay/main/gridData/stateCodesList.json";
+    fetchDataJSON(statesListUrl).then(states => {
+		  states; // fetched states
+		  var codes = states.list;
+		  var opt = "";
+		  var options = '<select id="stateSelect">';
+
+		  if (states.list.length > 0) {
+			  codes.forEach(function(item) {
+				  opt = '<option value="' + item.code + '">' + item.name + '</option>';
+				  options = options + opt;
+			  });
+			  options = options + '</select>';
+		  }
+	  document.getElementById("stateList").insertAdjacentHTML('afterbegin',options);
+
+    });
+
+    </script>
