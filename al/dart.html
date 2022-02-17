@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Dark Onyx: Curious Device</title>
+<script>
+var speed = 500; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "WASTEFUL";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+function display (selected) {
+  if (selected == 'basic') {
+    texttoshow = "Listen to:";
+    document.getElementById("audio").style.display = "block";
+    document.getElementById("extended").style.display = "block";
+  }
+  if (selected == 'extended') {
+    texttoshow = 'The numbers correspond to the top row of digits on a typewriter/computer keyboard.  The first digit is 2 and the (dot) • below it clues you to the letter key in the row below the 2, a W. The next digit, a 1 uses the letter two rows below (based on dot row) giving A.';
+    document.getElementById("answer").style.display = "block";
+  }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+  addMaterial(selected, texttoshow);
+
+}
+  
+</script>
+
+</head>
+<body>
+  <h1>Dark Onyx: Curious Device</h1>
+  <img src="http://rragan.atwebpages.com/al/numbers.png"/><br>
+  <button id="basic" onclick = "display('basic')"  style="margin-bottom:10px">Show basic hint</button> <br/><br/>
+  <div id="audio" style="display:none">
+  <audio controls>
+    <source src="hintSound.wav" type="audio/wav">
+    Your browser does not support the audio element.
+  </audio>
+</div>
+<br/><br/>
+  <button  id="extended" style="display:none" onclick = "display('extended')">Show extended hint</button><br/>
+  <button id="answer"  style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/> 
+  <div id="word"></div>
+</body>
+</html>
