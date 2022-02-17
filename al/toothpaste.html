@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Dark Onyx: Red vs Blue Team</title>
+<script>
+var speed = 75; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "The location shown by Google Maps is Hacker St so you want the word HACKER";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+    if (i >= txt.length) {return;}
+  }
+}
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+function display (selected)
+  {
+  if (selected == 'basic') {
+    texttoshow = "Look inside the newspaper boxes for a QR code or try these. Scan one with your phone. Did you choose right? If not, try again.";
+    document.getElementById("extended").style.display = "block";
+    document.getElementById("qrs").style.display = "block";
+  }
+  else if (selected == 'extended') {
+    texttoshow = 'If you can\'t scan the QR code, ';
+    document.getElementById("qr").style.display = "block";
+    document.getElementById("answer").style.display = "block";
+  }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+  addMaterial(selected, texttoshow);
+
+  
+  }
+
+</script>
+
+</head>
+<body>
+  <h1>Dark Onyx: Red vs Blue Team</h1>
+  <button id="basic" onclick = "display('basic')">Show basic hint</button> <br/><br/>
+  <div id="qrs" style="display:none"><img src=" http://rragan.atwebpages.com/al/blueQR.png" width="190" height="190"/>&nbsp; 
+  <img src=" http://rragan.atwebpages.com/al/redQR.png"/></div>
+  <button  id="extended" style="display:none" onclick = "display('extended')">Show extended hint</button><br/>
+  <a id="qr" style="display:none" href="http://maps.google.com/maps?q=29.998831, -91.820841">Alternative for QR code</a>
+  <button id="answer"  style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/> 
+  <div id="word"></div>
+</body>
+</html>
