@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Dark Onyx: Plaza del Sol</title>
+<script>
+var speed = 50; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "The digits from the balls picture are 1,6,5,4,1 + 3 for Red. As letters these are: AFEDAC. Rearrange these to make FACADE.";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+    if (i >= txt.length) {
+      return;
+    }
+  }
+}
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+function display (selected) {
+  if (selected == 'basic') {
+    texttoshow = "What color are the two large spherical objects here? Determine the value of the ball of that color.";
+    document.getElementById("extended").style.display = "block";
+  }
+  else if (selected == 'extended') {
+    texttoshow = "These are the colors of pool balls. Yellow=1, Blue=2, Red=3, Purple=4, Orange=5, Green=6. Convert the numbers to letters and rearrange to form a word.";
+    document.getElementById("answer").style.display = "block";
+  }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+  addMaterial(selected, texttoshow);
+
+  }
+
+</script>
+
+</head>
+<body>
+  <h1>Dark Onyx: Plaza del Sol</h1>
+  <img src="http://rragan.atwebpages.com/al/PoolBallsBetter.PNG" Width="250" height="125"/><br>
+  <button id="basic" onclick = "display('basic')">Show basic hint</button> <br/><br/>
+  <button  id="extended" style="display:none" onclick = "display('extended')">Show extended hint</button></div><br/>
+  <button id="answer"  style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/> 
+  <div id="word"></div>
+</body>
+</html>
