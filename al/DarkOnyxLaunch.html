@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Dark Onyx Adventure Lab</title>
+</head>
+<body>
+<h1> Welcome to the Dark Onyx Adventure Lab</h1>
+<h3> Watch the introductory video and then you will be taken to the lab itself to play it.</h3>
+    <div id="player"></div>
+
+    <script src="http://www.youtube.com/player_api"></script>
+
+    <script>
+
+        // create youtube player
+        var player;
+        function onYouTubePlayerAPIReady() {
+            player = new YT.Player('player', {
+              width: '640',
+              height: '390',
+              videoId: '1jtCXXZaOmk',
+              events: {
+                onReady: onPlayerReady,
+                onStateChange: onPlayerStateChange
+              }
+            });
+        }
+
+        // autoplay video
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // when video ends
+        function onPlayerStateChange(event) {
+            if(event.data === 0) {
+                window.location.href = "https://labs.geocaching.com/goto/DarkOnyx";
+            }
+        }
+
+    </script>
+</body>
