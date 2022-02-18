@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Finding Anemone: The Darkness</title>
+<script>
+var speed = 40; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "The letter E but use just E to answer the location question.";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+  }
+}
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+function display (selected) {
+  if (selected == 'basic') {
+    texttoshow = 'Dragons speak literally.';
+    document.getElementById("extended").style.display = "block";
+  }
+  if (selected == 'extended') {
+    texttoshow = 'What letter of the alphabet is the fifth? Now reread the riddle.';
+    document.getElementById("answer").style.display = "block";
+  }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+  addMaterial(selected, texttoshow);
+
+}
+  
+</script>
+
+</head>
+<body>
+  <h1>Finding Anemone: The Darkness</h1>
+
+<blockquote><pre>
+Sayeth the Dragon:
+
+"If to my cave you stray
+A dragon's game you must play
+I know of a Queen that you seek
+So be careful of what you speak
+Here is my riddle for you
+So tell me the answer true
+
+The Beginning of eternity,
+The end of time and space,
+The beginning of every end,
+And the end of every place.
+
+What am I?"
+</pre></blockquote>
+<br/><br/>
+  <button id="basic" onclick = "display('basic')"  style="margin-bottom:10px">Show basic hint</button> <br/><br/>
+  <button  id="extended" style="display:none" onclick = "display('extended')">Show extended hint</button><br/>
+  <button id="answer"  style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/> 
+  <div id="word"></div>
+</body>
+</html>
