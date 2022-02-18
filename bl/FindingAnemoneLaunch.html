@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Finding Anemone Adventure Lab</title>
+</head>
+<body>
+<h1> Welcome to the Finding Anemone Adventure Lab</h1>
+<h3> Watch the introductory video and then you will be taken to the lab itself to play it.</h3>
+    <div id="player"></div>
+
+    <script src="http://www.youtube.com/player_api"></script>
+
+    <script>
+
+        // create youtube player
+        var player;
+        function onYouTubePlayerAPIReady() {
+            player = new YT.Player('player', {
+              width: '640',
+              height: '390',
+              videoId: 'wHjLNnXh4M8',
+              events: {
+                onReady: onPlayerReady,
+                onStateChange: onPlayerStateChange
+              }
+            });
+        }
+
+        // autoplay video
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // when video ends
+        function onPlayerStateChange(event) {
+            if(event.data === 0) {
+                //window.location.href = "https://labs.geocaching.com/goto/FindingAnemone";
+                window.location.href = "https://labs.geocaching.com/goto/2546b27a-80f1-4959-8ae5-273ebb7d7952";
+            }
+        }
+
+    </script>
+</body>
