@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Finding Anemone: Lucius Quinctius Cincinnatus</title>
+<script>
+var speed = 10; /* The speed/duration of the effect in milliseconds */
+var i = 0;
+var txt = "I am Emperor Cincinnatus. We speak Pig Latin. In Pig Latin, the answer word is romans. Comprehend?";
+function typeWriter() {
+  if (i < txt.length) {
+    document.getElementById("word").innerHTML += txt.charAt(i);
+    i++;
+    setTimeout(typeWriter, speed);
+    if (i >= txt.length) {
+      return;
+    }
+  }
+}
+
+function addMaterial(selected, texttoshow) {
+  var newNode = document.createElement('br');
+  var t = document.createTextNode(texttoshow);
+  document.getElementById(selected).after(newNode);
+  newNode.after(t);
+}
+
+function display (selected) {
+  if (selected == 'hint') {
+    var texttoshow = "iyay amyay emperoryay incinnatuscay. eway eakspay igpay atinlay. inyay igpay atinlay, ethay answeryay ordway isyay omansray. omprehendcay?"; 
+    document.getElementById("answer").style.display = "block";
+    document.getElementById("rules").style.display = "block";
+    addMaterial(selected, texttoshow);
+  }
+  else if (selected == 'answer') {
+    typeWriter();
+    return;
+  }
+
+  }
+
+</script>
+
+</head>
+<body>
+  <h1>Finding Anemone: Lucius Quinctius Cincinnatus</h1>
+  What else would a roman Emperor Pig Cincinnatus speak?<br/>
+  <button id="hint" onclick = "display('hint')">Show text of speech</button> <br/><br/>
+  <a id="rules" href="https://en.wikipedia.org/wiki/Pig_Latin" style="display:none">Pig Latin Rules</a><br>
+  <button id="answer"  style="display:none;margin-top:20px" onclick = "display('answer')">Show answer</button><br/>
+  <div id="word"></div>
+</body>
+</html>
