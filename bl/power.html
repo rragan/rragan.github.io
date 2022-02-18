@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Find Anemone Game</title>
+  <link href="g2048/css/main.css" rel="stylesheet" type="text/css">
+
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+
+
+  <div class="container">
+      <div class="scores-container">
+        <div class="score-container">0</div>
+      </div>
+    <div class="heading">
+    <p class="game-intro">Join numbers and get to the <strong><span id="num">64</span> tile!</strong></p>
+     <p class="game-intro">
+    </p>
+    <div class="game-container">
+      <div class="game-message">
+        <p></p>
+        <div class="lower">
+          <a class="retry-button">Make it easier</a>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <div class="tile-container">
+
+      </div>
+    </div>
+
+    <p class="game-explanation">
+      <strong class="important">How to play:</strong> Swipe to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
+    </p>
+   <hr>
+
+    <p>Created by Gabriele Cirulli, adapted by rragan.</p>
+
+  </div>
+
+  <script type="text/javascript">
+   var aim = 256;
+  </script>
+  <script src="g2048/js/keyboard_input_manager.js"></script>
+  <script src="g2048/js/html_actuator.js"></script>
+  <script src="g2048/js/grid.js"></script>
+  <script src="g2048/js/tile.js"></script>
+  <script src="g2048/js/local_score_manager.js"></script>
+  <script src="g2048/js/game_manager.js"></script>
+  <script src="g2048/js/application.js"></script>
+
+
+
+</body>
+</html>
