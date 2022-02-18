@@ -1,0 +1,249 @@
+
+<!-------------  DO NOT REMOVE ---------------------
+  Warmer/Colder (GC2M8BR) a geocache by WakeboardLanier
+     http://coord.info/GC2M8BR (the cache)
+     http://coord.info/PR1G5PK (WakeboardLanier)
+
+  You're free to copy this to your site and modify it to create a cache of your own.  I do ask
+  though that you mention on your cache page that you got the idea and the code from WakeboardLanier's
+  "Warmer/Colder" cache.  Thanks!
+---------------------------------------------------->
+<!--------------------------------------------------
+Per the disclaimer above, I have adapted this code for use in http://coord.info/GC4Q92G.
+---------------------------------------------------->
+<html>
+<head>
+<title>Warmer, Colder</title>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="tea.js"></script>
+<script type="text/javascript" src="latlon.js"></script>
+<script type="text/javascript" src="resizer.js"></script>
+<script type="text/javascript">
+
+var WarmerColder = {
+  map: null,
+  infoWindow: null
+};
+
+
+
+/**
+ * starting coords:xxxx
+ */
+var startLat = 37.41;
+var startLng = -122.05;
+var centerLat = startLat;
+var centerLng =  startLng;
+var initialZoom = 14;
+
+
+var colder = "<font color=blue>Colder!</font>";
+var warmer = "<font color=red>Warmer!</font>";
+var congrats = "<font color=green><B>CONGRATULATIONS!!</B></font>";
+
+/**
+ * Called when clicking anywhere on the map and closes the info window.
+ */
+
+WarmerColder.closeInfoWindow = function() {
+  WarmerColder.infoWindow.close();
+};
+
+/**
+ * Opens the info window, anchors it to the specified marker, and
+ * displays the distance and warmer/colder message as its content.
+ */
+
+WarmerColder.openInfoWindow = function(marker) {
+
+  var markerLatLng = marker.getPosition();
+  var lat = markerLatLng.lat();
+  var lng = markerLatLng.lng();;
+  var currentLocation = new LatLon( lat, lng );
+  var dist = distanceTo(currentLocation, theCache);
+  var msg = warmer;
+  var distanceAway = dist;
+  var numTriesMsg = "";
+
+  numTries += 1;
+
+  if (dist <= .003) {
+	msg = congrats;
+	distanceAway = "<B>Cache: " + toLat( theCache._lat, 'dm', 3 ) + " " + toLon( theCache._lon, 'dm', 3 ) + "</B>" + "<br/>";
+        //distanceAway = distanceAway + "Trailhead: " + toLat( Trailhead._lat, 'dm', 3 ) + " " + toLon( Trailhead._lon, 'dm', 3 ) + "</B>";
+	numTriesMsg = "<br/>You found it in <font color=blue><b>" + numTries + "</b></font> tries.  Go get it!!";
+  } else if (dist < lastDist) {
+	msg = warmer;
+	distanceAway = dist;
+  } else {
+	msg = colder;
+	distanceAway = dist;
+  }
+
+  lastDist = dist;
+
+  if (msg == colder || msg == warmer) {
+	if (distanceAway < 1) {
+	  distanceAway = distanceAway * 1000;
+ 	  distanceAway = "It's " + distanceAway.toFixed(2) + " meters from here.";
+       } else {
+ 	  distanceAway = distanceAway * 1;
+	  distanceAway = "It's " + distanceAway.toFixed(2) + " km from here.";
+	}
+  }
+
+  WarmerColder.infoWindow.setContent([
+	'<center>',
+	'<b>' + msg + '</b><br/>',
+	distanceAway,
+	numTriesMsg,
+	'</center>',
+  ].join(''));
+
+  WarmerColder.infoWindow.open(WarmerColder.map, marker);
+};
+
+/** 
+ * This function returns Internet Explorer's major version number,
+ * or 0 for others. It works by finding the "MSIE " string and
+ * extracting the version number following the space, up to the decimal
+ * point, ignoring the minor version number
+ */
+
+function msieversion() {
+  var ua = window.navigator.userAgent
+  var msie = ua.indexOf ( "MSIE " )
+
+  if ( msie > 0 )      // If Internet Explorer, return version number
+     return parseInt (ua.substring (msie+5, ua.indexOf (".", msie )))
+  else                 // If another browser, return 0
+     return 0
+}
+
+/**
+ * Called only once on initial page load to initialize the map.
+ */
+
+WarmerColder.init = function() {
+
+   if ( msieversion() > 0 && msieversion() <= 6 ) {
+	  msg = 'IE' + msieversion() + ' is not supported.  Please try IE8+, Firefox, Safari, or Chrome.';
+	  msg += '\nGuess this adds a little to the difficulty rating for you.  Sorry about that.';
+	  alert(msg);
+   } else {
+	  // Create single instance of a Google Map.
+	  var centerLatLng = new google.maps.LatLng( centerLat, centerLng );
+
+	  WarmerColder.map = new google.maps.Map(document.getElementById('map-canvas'), {
+		zoom: initialZoom,
+		center: centerLatLng,
+		scaleControl: true,
+		mapTypeId: google.maps.MapTypeId.SATELLITE
+	  });
+  
+	  // Create a single instance of the InfoWindow object which will be shared
+	  // by all Map objects to display information to the user.
+	  WarmerColder.infoWindow = new google.maps.InfoWindow();
+  
+	  // Create a draggable marker
+	   var marker = new google.maps.Marker({
+		  map: WarmerColder.map,
+ 		  position: new google.maps.LatLng( startLat,startLng ),
+		  draggable: true,
+		  title: 'Drag me to the cache!'
+	  });
+
+	  // Register an event listener to the marker to open an info
+	  // window when the marker is dropped.
+	  google.maps.event.addListener(marker, 'dragend', function() {
+		WarmerColder.openInfoWindow(marker);
+	  });
+	  // Close the info window when they start dragging again.
+	  google.maps.event.addListener(marker, 'dragstart', WarmerColder.closeInfoWindow);
+	  // Make the info window close when clicking anywhere on the map.
+	  google.maps.event.addListener(WarmerColder.map, 'click', WarmerColder.closeInfoWindow);
+   }
+}
+
+var lastLat = startLat;
+var lastLng = startLng;
+var theCache = new LatLon( Tea.decrypt(cacheLat, password), Tea.decrypt(cacheLng, password) )
+var Trailhead = new LatLon( Tea.decrypt(trailheadLat, password), Tea.decrypt(trailheadLng, password) )
+var currentLocation = new LatLon( lastLat, lastLng );
+var lastDist = distanceTo( currentLocation, theCache );
+var numTries = 0;
+
+</script>
+</head>
+
+<body onload="WarmerColder.init();">
+<center><H1>Let's play a little game of <font color="red">Warmer</font>/<font color="blue">Colder</font>...</H1><br></center>
+<table align="center" cellpadding="10" cellspacing="4" border="4" width="80%" bgcolor="#8c9e63">
+<tr bgcolor="#C6E3C0">
+	<td style="padding:0px;">
+		<div id="map-canvas" style="width:600px; height:600px"></div>
+	</td>
+	<td valign="top">
+
+		<center>
+        <table width="100%" cellpadding="3" border="0">
+            <tr>
+                <td>
+                    <img src="http://www.geocaching.com/images/WptTypes/8.gif" alt="Unknown Cache" width="32" height="32" />
+                        <a href='http://coord.info/GC8WC23'><B>
+GC8WC23 Warmer/Colder</B></a>
+					<br/>
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <strong>
+                        Difficulty:</strong>
+                    <img src="http://www.geocaching.com/images/stars/stars1_5.gif" alt="1.5 out of 5" />
+                </td>
+
+                <td>
+
+                    <strong>
+                        Terrain:</strong>
+                    <img src="http://www.geocaching.com/images/stars/stars2.gif" alt="2 out of 5" />
+                </td>
+            </tr>
+
+
+        </table>
+		</center>
+
+		<hr/>
+		<h2>Instructions:</h2>
+		<P>
+		Drag and drop the pin to where you think the cache is.  I'll tell you if you're getting warmer or colder.
+		I'll even tell you how far away you are.  If you can get within about 3 meters of the cache I'll give you the coordinates.
+		</P>
+		<P>
+
+		This is an interactive map so you can (and will probably need to) zoom in or out and pan the map.
+		</P>
+		<P>
+		Good luck and I hope you enjoy this puzzle and the cache!!
+		</P>
+	</td>
+</tr>
+
+</table>
+<br/>
+<center>
+<small>
+<!--
+Acknowledgements:
+<a href="http://www.movable-type.co.uk/scripts/latlong.html">Lat/Long utilities</a> and 
+<a href="http://www.movable-type.co.uk/scripts/tea-block.html">Block TEA</a>&nbsp<i>© 2002-2010 Chris Veness</i>
+<br/>
+-->
+This idea originated with <a href="http://www.geocaching.com/profile/Default.aspx?guid=d3cea4e9-0472-4e1b-ac29-462e39c3d7f2"target="_blank">WakeboardLanier</a>'s cache <a href="http://coord.info/GC2M8BR" target="_blank">"Warmer/Colder"</a>.
+</small>
+</center>
+</body>
+</html>
