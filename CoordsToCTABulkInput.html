@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>coords to cachetur bulk input format</title>
+</head>
+<body>
+  <h1>coords to cachetur bulk input format</h1>
+Given a list of coordinates 1/line with optional comment after, generate cachetur bulk input format lines. Format: coords;comment<br/>
+  <button onclick="compute()" style="font-size:24px;width:200px;height=200px;border-width:4px">Generate</button>&nbsp;<br><br>
+ Coordinate Name Prefix: <input id="prefix" type="text"/></br>
+  <textarea id="in" rows="20" cols="80"></textarea><br>
+  <b>Bulk format output</b><br>
+  <textarea id="res" rows="20" cols="80"></textarea>
+
+<script>
+var result = document.getElementById('res');
+
+function compute() {
+  var prefix = document.getElementById('prefix').value;
+  var lines = document.getElementById('in').value.split('\n');
+// strip blank lines
+  for( var i = 0; i < lines.length; i++){ 
+                                   
+        if ( lines[i].length === 0) { 
+            lines.splice(i, 1); 
+            i--; 
+        }
+    }
+  var list = "";
+  for(var i = 0;i < lines.length;i++){
+      var ll = toBulk(i+1,prefix,lines[i]);
+      if (ll.length > 0) {
+        list = list + ll;
+       if (i+1 !== lines.length) {
+         list+= "\n";
+       }
+      }
+  }
+
+ result.value = list;
+// Make copy to clipboard easy 
+ result.setSelectionRange(0, 9999);
+}
+function toBulk(i,prefix,coords) {
+  var coord = coords.split(";");
+  var line = "";
+  var prfx = prefix?prefix:"C";
+  line=prfx+i+";lab;" + coord[0] + ";";
+  if (coord[1]) {
+    line += '"' +coord[1]+'"';
+  } else {
+    line += '"' +prfx+'"';
+  }
+  return line;
+}
+
+ </script>
+</body>
+</html>
