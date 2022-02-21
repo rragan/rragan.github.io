@@ -1,0 +1,120 @@
+<html><head>
+	<title>Convert GPX to list of GC code,name,date found</title>
+	<meta charset="utf-8">
+<body>
+<h3>Convert GPX to list of GC codes, names, date found. Use MyFinds PQ for input.</h3>
+
+   <input type="file" id="files" name="files[]">
+<br>
+<br>
+    User: <input id="user"value="rragan">&nbsp;&nbsp;  Show Date?: <input id="showdate" type="checkbox" checked> <br>
+	<textarea id="list" rows="20" cols="80"></textarea>
+<br>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+
+    // Check for the various File API support.
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+
+        // Great success! All the File APIs are supported.
+
+    } else {
+
+        alert('The File APIs are not fully supported in this browser.');
+
+    }
+
+    var output = [];
+    var error = [];
+
+    function updateView() {
+        var outarea = document.getElementById('list');
+        outarea.value = output.join(' '),
+            outarea.setSelectionRange(0, 99999);
+    }
+
+
+    function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+        var who = document.getElementById('user').value;
+        var showdate = document.getElementById('showdate').checked;
+
+        // files is a FileList of File objects.
+        for (var i = 0, f; f = files[i]; i++) {
+
+            var reader = new FileReader();
+            reader.onload = function(evt) {
+
+                var re = /<name>(GC[A-Z0-9]*)<\/name>/g;
+                var re2 = /<groundspeak:name>(.*)<\/groundspeak.name>/g;
+                var re3 = /<groundspeak:date>(.+?)<\/groundspeak.date>/;
+                var re4 = /<groundspeak:type>(.+?)<\/groundspeak.type>/;
+                var re5 = /<groundspeak:finder .*>(.*)<\/groundspeak.finder>/;
+
+                // By lines
+
+                var lines = this.result.split('\n');
+                var line = '';
+                var date = 0;
+                var foundit = 0;
+
+                for (var i = 0; i < lines.length; i++) {
+                    lines[i] = lines[i].replace(/\&#039;/g, '\'');
+                    var m1 = re.exec(lines[i]);
+                    var m2 = re2.exec(lines[i]);
+                    var m3 = re3.exec(lines[i]);
+                    var m4 = re4.exec(lines[i]);
+                    var m5 = re5.exec(lines[i]);
+
+                    if (m1 !== null) { //get GC code
+                        line = m1[1];
+                        m1 = null;
+                    }
+
+                    if (m2 !== null) { // get title
+                        line += " " + m2[1];
+                        m2 = null;
+                    }
+
+                    if (m3 !== null) { // get Date
+                        var timeparts = m3[1].split('T');
+                        date = " " + timeparts[0];
+                    }
+
+                    if (m4 !== null && m4[1] === 'Found it') { // look for Found it line
+                        foundit = 1;
+                        m4 = null;
+                    }
+
+                    if (m5 !== null && foundit === 1 && m5[1] === who) { // only handle my Found it line
+                        if (showdate) {
+                            line += date;
+                        }
+                        output.push(line + "\n");
+                        line = '';
+                        foundit = 0;
+                    }
+                    if (m5 !== null && foundit === 1 && m5[1] !== who) {
+                        foundit = 0;
+                    }
+                    m5 = null;
+                }
+                updateView();
+            }
+
+            reader.readAsText(f);
+
+        }
+
+    }
+
+
+$(document).ready(function(){
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+});
+	</script>
+	 
+
+
+
+</body></html>
