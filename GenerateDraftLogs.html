@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+  <h1>Generate Drafts for logging caches</h1>
+  <b>Input format: GC codes - comma,space or new line separated</b><br>
+  <textarea id="codes" rows="10" cols="80"></textarea><br>
+  <b>Date to log for</b>
+  <input id="time" type="date"></input><br>
+  <b>Log message</b>
+  <input id="message"></input><br>
+  <b>Result</b><br>
+  <textarea id="result" rows="10" cols="80"></textarea>
+<br>
+<button onclick="generate()" style="font-size:18px;width:200px;height=200px;border-width:4px">Generate</button>&nbsp;
+<script>
+
+function generate() {
+ var codes = document.getElementById('codes').value;
+ codes = codes.replace(/,/g,' ');
+ codes = codes.replace(/\n/g,' ').split(' ');
+ var time = document.getElementById('time').value.split('-');
+ var ISODate = time[0] + "-" + time[1] + "-" + time[2];
+ time = new Date(ISODate);
+ // fudge to 3 pm to get UTC date right
+ time = new Date(time.getTime() + 1000 * 3600 * 15);
+ var message = document.getElementById('message').value;
+ var result = document.getElementById('result');
+ result.value = "";
+  for(var j = 0;j < codes.length;j++) {
+    timestr = time.toISOString();
+    timestr = timestr.substring(0, timestr.length-8) + 'Z'; //strip seconds
+    var line = codes[j].toUpperCase() + ',' + timestr + ',Found it,"' + message + '"\n';
+    result.value = result.value + line;
+    time = new Date(time.getTime() + 1000 * 60); // advance time 1 minute
+  }
+  result.setSelectionRange(0, 9999);
+
+}
+
+ </script>
+</body>
+</html>
