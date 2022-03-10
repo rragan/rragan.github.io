@@ -1,0 +1,80 @@
+<html><head>
+<title>Gen CTA bulk from Labs</title>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+// Check for the various File API support.
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+    // Great success! All the File APIs are supported.
+} else {
+    alert('The File APIs are not fully supported in this browser.');
+}
+
+var output = [];
+
+function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    var coords;
+    var name;
+    var code;
+    var outarea = document.getElementById('list');
+
+    // files is a FileList of File objects.
+    for (var i = 0, f; f = files[i]; i++) {
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+            var re2 = /<wpt lat=\"([0-9\.]+)\"\slon=\"(-[0-9\.]+)\"/g;
+            var re3 = /<urlname>(.*)<\/urlname>/g;
+		var re1 = /<name>(.*)<\/name>/g;
+            var lines = this.result.split('\n');
+            var line = '';
+            for (var i = 0; i < lines.length; i++) {
+                line = lines[i];
+                var m1 = re1.exec(line);
+                var m2 = re2.exec(line);
+		    var m3 = re3.exec(line);
+                if (m1 !== null) {
+                    code = m1[1];
+                }
+
+                if (m2 !== null) {
+                    var lat = m2[1];
+                    var lon = m2[2];
+                    coords = lat + "," + lon;
+                }
+                if (m3 !== null) {
+                    name = m3[1];
+		        var line = code + ';lab;' + coords +';"' + name + '"\n';
+			  output.push(line);
+			code= null;
+			coords = null;
+			name = null;
+                }
+            }
+
+           updateView(output);
+        };
+        reader.readAsText(f);
+    }
+}
+
+function updateView(output) {
+    var outarea = document.getElementById('list');
+    outarea.value = output.join(' '),
+        outarea.setSelectionRange(0, 99999);
+}
+
+$(document).ready(function() {
+    document.getElementById('files').addEventListener('change', handleFileSelect, false);
+});
+
+</script>
+</head>
+<body>
+<h3>Generate CTA bulk waypoints for labs from GPX</h3>
+GPX: <input type="file" id="files" name="files[]"> <br>
+<textarea id="list" rows="25" cols="80"></textarea>
+<br><b>Reload page to run again</b>
+
+<div id="error"></div>
