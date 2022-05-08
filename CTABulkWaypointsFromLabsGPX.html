@@ -1,80 +1,101 @@
-<html><head>
-<title>Gen CTA bulk from Labs</title>
-<meta charset="utf-8">
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Generate CTA bulk waypoints for labs from GPX</title>
+<link media="screen" href="style.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+<h2>Generate CTA bulk waypoints for labs from GPX</h2>
+<h3>Choose a GPX file or zipped GPX file</h3>
+<input type="file" id="file" name="file" />
+<br/>
+<textarea id="list" rows="25" cols="80"></textarea>
+<br><b>Reload page to run again</b>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script>
-
-// Check for the various File API support.
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // Great success! All the File APIs are supported.
-} else {
-    alert('The File APIs are not fully supported in this browser.');
-}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"></script>
+<script type="text/javascript">
 var output = [];
 
-function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
-    var coords;
-    var name;
-    var code;
-    var outarea = document.getElementById('list');
-
-    // files is a FileList of File objects.
-    for (var i = 0, f; f = files[i]; i++) {
-        var reader = new FileReader();
-        reader.onload = function(evt) {
-            var re2 = /<wpt lat=\"([0-9\.]+)\"\slon=\"(-[0-9\.]+)\"/g;
-            var re3 = /<urlname>(.*)<\/urlname>/g;
-		var re1 = /<name>(.*)<\/name>/g;
-            var lines = this.result.split('\n');
-            var line = '';
-            for (var i = 0; i < lines.length; i++) {
-                line = lines[i];
-                var m1 = re1.exec(line);
-                var m2 = re2.exec(line);
-		    var m3 = re3.exec(line);
-                if (m1 !== null) {
-                    code = m1[1];
-                }
-
-                if (m2 !== null) {
-                    var lat = m2[1];
-                    var lon = m2[2];
-                    coords = lat + "," + lon;
-                }
-                if (m3 !== null) {
-                    name = m3[1];
-		        var line = code + ';lab;' + coords +';"' + name + '"\n';
-			  output.push(line);
-			code= null;
-			coords = null;
-			name = null;
-                }
-            }
-
-           updateView(output);
-        };
-        reader.readAsText(f);
+$("#file").on("change", function(evt) {
+    var files = evt.target.files;
+    if (files[0].name.endsWith(".zip")) {
+    	handleZipFile(files[0]);
+    } else {
+    	var reader = new FileReader();
+    	reader.onload = function(evt) {
+    		processXML(this.result);
+    	};
+    	reader.readAsText(files[0]);
     }
+
+    // Closure to capture the file information.
+    function handleZipFile(f) {
+        getZipFilesContent(f).then(dd => {
+            processXML(dd);
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+});
+
+async function getZipFilesContent(data) {
+    const zipContent = [];
+    const promises = [];
+    const zip = (await JSZip.loadAsync(data));
+    zip.forEach(async (relativePath, file) => {
+        const promise = file.async('string');
+        promises.push(promise);
+        zipContent.push({
+            file: relativePath,
+            content: await promise
+        });
+    });
+    await Promise.all(promises);
+    return zipContent[0].content;
+}
+
+
+function processXML(dd) {
+    var re2 = /<wpt lat=\"([0-9\.]+)\"\slon=\"(-[0-9\.]+)\"/g;
+    var re3 = /<urlname>(.*)<\/urlname>/g;
+    var re1 = /<name>(.*)<\/name>/g;
+    var lines = dd.split('\n');
+    var line = '';
+    for (var i = 0; i < lines.length; i++) {
+        line = lines[i];
+        var m1 = re1.exec(line);
+        var m2 = re2.exec(line);
+        var m3 = re3.exec(line);
+        if (m1 !== null) {
+            code = m1[1];
+        }
+
+        if (m2 !== null) {
+            var lat = m2[1];
+            var lon = m2[2];
+            coords = lat + "," + lon;
+        }
+        if (m3 !== null) {
+            name = m3[1];
+            line = code + ';lab;' + coords + ';"' + name + '"\n';
+            output.push(line);
+            code = null;
+            coords = null;
+            name = null;
+        }
+    }
+    updateView(output);
 }
 
 function updateView(output) {
     var outarea = document.getElementById('list');
     outarea.value = output.join(' '),
-        outarea.setSelectionRange(0, 99999);
+    outarea.setSelectionRange(0, 99999);
 }
 
-$(document).ready(function() {
-    document.getElementById('files').addEventListener('change', handleFileSelect, false);
-});
-
 </script>
-</head>
-<body>
-<h3>Generate CTA bulk waypoints for labs from GPX</h3>
-GPX: <input type="file" id="files" name="files[]"> <br>
-<textarea id="list" rows="25" cols="80"></textarea>
-<br><b>Reload page to run again</b>
-
-<div id="error"></div>
+</body>
+</html>
