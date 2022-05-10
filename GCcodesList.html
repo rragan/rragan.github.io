@@ -1,9 +1,9 @@
-html code
 <html><head>
-	<title>Convert GPX to list of GC codes</title>
-	<meta charset="utf-8">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script>
+<title>Convert GPX to list of GC codes with semicolon or space separator</title>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"></script>
+<script>
 
 // Check for the various File API support.
 if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -14,42 +14,76 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 
 var output = [];
 var error = [];
+var spaceSeparator;
+
+// Closure to capture the file information.
+function handleZipFile(f) {
+	getZipFilesContent(f).then(dd => {
+		processXML(dd);
+	}).catch(e => {
+		console.log(e);
+	});
+}
+
+async function getZipFilesContent(data) {
+	const zipContent = [];
+	const promises = [];
+	const zip = (await JSZip.loadAsync(data));
+	zip.forEach(async (relativePath, file) => {
+		const promise = file.async('string');
+		promises.push(promise);
+		zipContent.push({
+			file: relativePath,
+			content: await promise
+		});
+	});
+	await Promise.all(promises);
+	return zipContent[0].content;
+}
+
+function processXML(dd) {
+	var re = /<name>(GC[A-Z0-9]*)<\/name>/g, match;
+	while (match = re.exec(dd)) {
+		output.push(match[1]);
+	}
+	updateView(output);
+}
+
 
 function updateView() {
-	document.getElementById('list').innerHTML = output.join(' ');
+	var sep = ";";
+	if (spaceSeparator) {
+		sep = " ";
+	}
+	document.getElementById('list').innerHTML = output.join(sep);
 	document.getElementById('error').innerHTML = '<ul>' + error.join('') + '</ul>';
 }
 
 function handleFileSelect(evt) {
 	var files = evt.target.files; // FileList object
+	spaceSeparator = document.getElementById('space').checked;
 
-	// files is a FileList of File objects. 
-	for (var i = 0, f; f = files[i]; i++) {
+	if (files[0].name.endsWith(".zip")) {
+		handleZipFile(files[0]);
+	} else {
 		var reader = new FileReader();
-		reader.onloadend = function(evt) {
-			if (evt.target.readyState == FileReader.DONE) {
-				var re = /<name>(GC[A-Z0-9]*)<\/name>/g, match;
-				while (match = re.exec(evt.target.result)) {
-					output.push(match[1]);
-evt.target.result = "";
-				}
-			}
-			updateView();
-		}
-		reader.readAsText(f);
-    }
+		reader.onload = function(evt) {
+			processXML(this.result);
+		};
+		reader.readAsText(files[0]);
+	}
 }
 
 $(document).ready(function(){
   document.getElementById('files').addEventListener('change', handleFileSelect, false);
 });
-	</script>
+</script>
 </head>
 <body>
-	<input type="file" id="files" name="files[]"> <br>
+<h3>Convert GPX to list of GC codes with semicolon or space separator</h3> <br/>
+
+	<input type="file" id="files" name="files[]"> Space separator?: <input id="space" type="checkbox">  <br>
 	<textarea id="list" rows="20" cols="80"></textarea>
 	<div id="error"></div>
-
-
 
 </body></html>
