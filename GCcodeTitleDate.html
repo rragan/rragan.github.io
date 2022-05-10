@@ -1,8 +1,8 @@
 <html><head>
-	<title>Convert GPX to list of GC code,name,date found</title>
+	<title>Convert GPX to list of GC code,name, and optional date found</title>
 	<meta charset="utf-8">
 <body>
-<h3>Convert GPX or zipped GPX to list of GC codes, names, date found. Use MyFinds PQ for input.</h3>
+<h3>Convert GPX to list of GC codes, names, optional date found. Use MyFinds PQ for input.</h3>
 
    <input type="file" id="files" name="file">
 <br>
@@ -24,6 +24,7 @@
     var output = [];
     var error = [];
     var who;
+    var showdate;
 
 	// Closure to capture the file information.
 	function handleZipFile(f) {
@@ -117,7 +118,7 @@
     function handleFileSelect(evt) {
         var files = evt.target.files; // FileList object
         who = document.getElementById('user').value;
-        var showdate = document.getElementById('showdate').checked;
+        showdate = document.getElementById('showdate').checked;
 
 		if (files[0].name.endsWith(".zip")) {
 			handleZipFile(files[0]);
