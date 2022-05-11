@@ -9,7 +9,7 @@
 
 <body>
 <h2>Generate CTA bulk waypoints for labs from GPX</h2>
-<h3>Choose a GPX file or zipped GPX file</h3>
+<h3>Choose a GPX file or zipped GPX file. Handles Cachly and labs2gpx files.</h3>
 <input type="file" id="file" name="file" />
 <br/>
 <textarea id="list" rows="25" cols="80"></textarea>
@@ -19,7 +19,7 @@
 <script type="text/javascript">
 var textArea = document.createElement('area');
 var output = [];
-var cachly = false;
+var skippingToLab = false;
 
 $("#file").on("change", function(evt) {
     var files = evt.target.files;
@@ -60,7 +60,7 @@ async function getZipFilesContent(data) {
 }
 
 function processXML(dd) {
-    var re2 = /<wpt lat=\"([0-9\.]+)\"\slon=\"(-[0-9\.]+)\"/g;
+    var re2 = /<wpt lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
     var re3 = /<urlname>(.*)<\/urlname>/g;
     var re1 = /<name>(.*)<\/name>/g;
     var lines = dd.split('\n');
@@ -69,11 +69,20 @@ function processXML(dd) {
     var descFull = "";
     descDone = false;
     var descMode = false;
-    for (var i = 0; i < lines.length; i++) {
-    if (line.indexOf("<author>Cachly</author>" >= 0)) {
-    	cachly = true;
-    }
-        line = lines[i];
+	for (var i = 0; i < lines.length; i++) {
+	    line = lines[i];
+		if(line.indexOf("<type>Geocache|Adventure Lab") >= 0 || (line.indexOf("<type>Geocache|Lab Cache") >= 0) ) {
+			skippingToLab = false;
+			continue;
+		}
+		if (line.indexOf("<type>Geocache|") >= 0 && line.indexOf("Lab") < 0) {
+			skippingToLab = true;
+			coords= null;
+			code = null;
+		}
+		if (skippingToLab) {
+			continue;
+		}
         var m1 = re1.exec(line);
         var m2 = re2.exec(line);
         var m3 = re3.exec(line);
@@ -129,6 +138,8 @@ function processXML(dd) {
 
 function updateView(output) {
     var outarea = document.getElementById('list');
+    // Remove last newline
+    output[output.length -1] = output[output.length -1].trim();
     outarea.value = output.join(' '),
     outarea.setSelectionRange(0, 99999);
 }
