@@ -17,7 +17,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"></script>
 <script type="text/javascript">
+var textArea = document.createElement('area');
 var output = [];
+var cachly = false;
 
 $("#file").on("change", function(evt) {
     var files = evt.target.files;
@@ -57,18 +59,41 @@ async function getZipFilesContent(data) {
     return zipContent[0].content;
 }
 
-
 function processXML(dd) {
     var re2 = /<wpt lat=\"([0-9\.]+)\"\slon=\"(-[0-9\.]+)\"/g;
     var re3 = /<urlname>(.*)<\/urlname>/g;
     var re1 = /<name>(.*)<\/name>/g;
     var lines = dd.split('\n');
     var line = '';
+    var m4 = null;
+    var descFull = "";
+    descDone = false;
+    var descMode = false;
     for (var i = 0; i < lines.length; i++) {
+    if (line.indexOf("<author>Cachly</author>" >= 0)) {
+    	cachly = true;
+    }
         line = lines[i];
         var m1 = re1.exec(line);
         var m2 = re2.exec(line);
         var m3 = re3.exec(line);
+        if(line.indexOf("<groundspeak:long_description") >= 0) {
+        	line=line.replace(/\s*<groundspeak:long_description html="False">\s*/g, "");
+        	line = line.trim();
+        	descMode = true;
+        }
+        if(descMode) {
+        	if(line.indexOf("\</groundspeak:long_description") >= 0) {
+				line=line.replace(/\s*<\/groundspeak:long_description>\s*/g,"");
+				descFull += line;
+				descMode = false;
+				m4 = descFull;
+				descFull = "";
+			} else {
+				descFull += line.trim();
+			}
+		}
+
         if (m1 !== null) {
             code = m1[1];
         }
@@ -76,15 +101,27 @@ function processXML(dd) {
         if (m2 !== null) {
             var lat = m2[1];
             var lon = m2[2];
-            coords = lat + "," + lon;
+            var coords = lat + "," + lon;
         }
         if (m3 !== null) {
             name = m3[1];
-            line = code + ';lab;' + coords + ';"' + name + '"\n';
-            output.push(line);
-            code = null;
-            coords = null;
-            name = null;
+        }
+
+		if (m4 !== null) {
+			var m4 = stripHtml(m4);
+			m4 = decodeHTMLEntities(m4);
+			// Strip out excess from labs2gpx HTML. Cachetur limit is 1024 chars.
+			m4 = m4.replace(/.*Waypoint Description/,"");
+			m4 = m4.replace(/https:\/\/.*Question/,"Question");
+			m4= m4.replace(/Adventure Lab Descriptions.*/,"");
+			m4 = m4.replace(/Award Information.*/,"");
+			line = decodeHTMLEntities(name) + ';lab;' + coords + ';' + m4 + '\n';
+			output.push(line);
+			code = null;
+			coords = null;
+			name = null;
+			desc = null;
+			m4 = null;
         }
     }
     updateView(output);
@@ -94,6 +131,18 @@ function updateView(output) {
     var outarea = document.getElementById('list');
     outarea.value = output.join(' '),
     outarea.setSelectionRange(0, 99999);
+}
+
+function decodeHTMLEntities(text) {
+  text=text.replace(/;/g, "");
+  text=text.replace(/"/g,"'");
+  textArea.innerHTML = text;
+  return textArea.innerText;
+}
+
+function stripHtml(text) {
+  textArea.innerHTML = text;
+  return textArea.textContent;
 }
 
 </script>
