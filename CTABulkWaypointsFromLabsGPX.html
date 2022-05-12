@@ -20,6 +20,7 @@
 var textArea = document.createElement('area');
 var output = [];
 var skippingToLab = false;
+var geeohGo = false;
 
 $("#file").on("change", function(evt) {
     var files = evt.target.files;
@@ -60,6 +61,7 @@ async function getZipFilesContent(data) {
 }
 
 function processXML(dd) {
+
     var re2 = /<wpt lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
     var re3 = /<urlname>(.*)<\/urlname>/g;
     var re1 = /<name>(.*)<\/name>/g;
@@ -70,20 +72,24 @@ function processXML(dd) {
     descDone = false;
     var descMode = false;
 	for (var i = 0; i < lines.length; i++) {
-	    line = lines[i];
-		if(line.indexOf("<type>Geocache|Adventure Lab") >= 0 || (line.indexOf("<type>Geocache|Lab Cache") >= 0) ) {
-			skippingToLab = false;
-			continue;
+		line = lines[i];
+		if (line.indexOf("creator=\"Geooh") >= 0) {
+			processGeeohGoXML(lines);
+		}
+		var parts = line.split(/<\/wpt>/);
+		if (parts.length > 1) {
+			line = parts[0]; // get first part up to /wpt
+			var rest = parts.slice(1);
+			rest = rest.join('');
+			lines[i+1] = rest + lines[i+1];
 		}
 		if (line.indexOf("<type>Geocache|") >= 0 && line.indexOf("Lab") < 0) {
 			skippingToLab = true;
 			coords= null;
-			code = null;
 		}
 		if (skippingToLab) {
 			continue;
 		}
-        var m1 = re1.exec(line);
         var m2 = re2.exec(line);
         var m3 = re3.exec(line);
         if(line.indexOf("<groundspeak:long_description") >= 0) {
@@ -91,9 +97,16 @@ function processXML(dd) {
         	line = line.trim();
         	descMode = true;
         }
+        // What if </desc> on same line
+        if(geeohGo && line.indexOf("<desc>") >= 0) {
+			line=line.replace(/\s*<desc">\s*/g, "");
+			line = line.trim();
+			descMode = true;
+        }
         if(descMode) {
-        	if(line.indexOf("\</groundspeak:long_description") >= 0) {
+        	if(line.indexOf("\</groundspeak:long_description") >= 0  || line.indexOf("<\/desc>") >= 0) {
 				line=line.replace(/\s*<\/groundspeak:long_description>\s*/g,"");
+				line=line.replace(/\s*<\/desc>.*/g,"");
 				descFull += line;
 				descMode = false;
 				m4 = descFull;
@@ -102,10 +115,6 @@ function processXML(dd) {
 				descFull += line.trim();
 			}
 		}
-
-        if (m1 !== null) {
-            code = m1[1];
-        }
 
         if (m2 !== null) {
             var lat = m2[1];
@@ -126,7 +135,6 @@ function processXML(dd) {
 			m4 = m4.replace(/Award Information.*/,"");
 			line = decodeHTMLEntities(name) + ';lab;' + coords + ';' + m4 + '\n';
 			output.push(line);
-			code = null;
 			coords = null;
 			name = null;
 			desc = null;
@@ -136,12 +144,70 @@ function processXML(dd) {
     updateView(output);
 }
 
+function processGeeohGoXML(dd) {
+    var m1;
+    var m2;
+    var m3;
+    var m4 = null;
+    var alName = "";
+    var line;
+	var lines = dd.join('');
+	lines = lines.replace(/\r/gm,"");
+	lines = lines.split(/<wpt /);
+
+	for (var i = 1; i < lines.length; i++) {
+		var re1 = /<urlname>(.*)<\/urlname>/g;
+	    var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
+	    var re3 = /<name>(.*)<\/name>/g;
+   		var re4 = /<desc>(.*)<\/desc>/g;
+		line = lines[i];
+		m1 = re1.exec(line);
+		// Get Overarching AL name
+		if(m1 && line.indexOf("<type>Geocache|Adventure Lab" >= 0)) {
+			alName = m1[1];
+		}
+		if (line.indexOf("<groundspeak:owner id") >= 0 ||(line.indexOf("<type>Waypoint|") >= 0 && line.indexOf("<type>Waypoint|Stage") < 0 )) {
+			continue;
+		}
+
+		coords= null;
+
+        m2 = re2.exec(line);
+        m3 = re3.exec(line);
+        m4 = re4.exec(line);
+
+
+        if (m2 !== null) {
+            var lat = m2[1];
+            var lon = m2[2];
+            var coords = lat + "," + lon;
+        }
+        if (m3 !== null) {
+            name = m3[1];
+        }
+
+		if (m4 !== null) {
+		    m4 = m4[1];
+			m4 = stripHtml(m4);
+			m4 = decodeHTMLEntities(m4);
+			line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + m4 + '\n';
+			output.push(line);
+			coords = null;
+			name = null;
+			m4 = null;
+        }
+    }
+    updateView(output);
+}
+
 function updateView(output) {
     var outarea = document.getElementById('list');
     // Remove last newline
-    output[output.length -1] = output[output.length -1].trim();
-    outarea.value = output.join(' '),
-    outarea.setSelectionRange(0, 99999);
+    if (output) {
+		output[output.length -1] = output[output.length -1].trim();
+		outarea.value = output.join(' '),
+		outarea.setSelectionRange(0, 99999);
+	}
 }
 
 function decodeHTMLEntities(text) {
