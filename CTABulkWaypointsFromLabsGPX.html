@@ -101,9 +101,9 @@ function processXML(dd) {
         	descMode = true;
         }
 
-        if(line.indexOf("groundspeak:long_description html="True">") >= 0) {
+        if(line.indexOf("groundspeak:long_description html=\"True\">") >= 0) {
         	line=line.replace(/\s*<groundspeak:long_description html="True">.*Waypoint Description/g, "");
-        >
+        }
 
         if(descMode) {
          	if(line.indexOf("\</groundspeak:long_description") >= 0 ) {
@@ -167,27 +167,27 @@ function processGeeohGoXML(dd) {
 	lines = lines.split(/<wpt /);
 
 	for (var i = 1; i < lines.length; i++) {
-		var re1 = /<urlname>(.*)<\/urlname>/g;
+	    var re1 = /<urlname>(.*)<\/urlname>/g;
 	    var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
 	    var re3 = /<name>(.*)<\/name>/g;
-   		var re4 = /<desc>(.*)<\/desc>/g;
-   		var re5 = /<url>(.*)<\/url>/g;
+   	    var re4 = /<desc>(.*)<\/desc>/g;
+   	    var re5 = /<url>(.*)<\/url>/g;
 
-		line = lines[i];
-		m1 = re1.exec(line);
-		// Get Overarching AL name
-		if(m1 && line.indexOf("<type>Geocache|Adventure Lab" >= 0)) {
-			alName = m1[1];
-		}
-		m5 = re5.exec(line);
-		if(m5 && line.indexOf("<type>Geocache|Adventure Lab" >= 0)) {
-			alUrl = m5[1];
-		}
-		if (line.indexOf("<groundspeak:owner id") >= 0 ||(line.indexOf("<type>Waypoint|") >= 0 && line.indexOf("<type>Waypoint|Stage") < 0 )) {
-			continue;
-		}
+            line = lines[i];
+            m1 = re1.exec(line);
+	// Get Overarching AL name
+	    if(m1 && line.indexOf("<type>Geocache|Adventure Lab" >= 0)) {
+		alName = m1[1];
+	    }
+	    m5 = re5.exec(line);
+	    if(m5 && line.indexOf("<type>Geocache|Adventure Lab" >= 0)) {
+		alUrl = m5[1];
+	    }
+	    if (line.indexOf("<groundspeak:owner id") >= 0 ||(line.indexOf("<type>Waypoint|") >= 0 && line.indexOf("<type>Waypoint|Stage") < 0 )) {
+		continue;
+	    }
 
-		coords= null;
+	    coords= null;
 
         m2 = re2.exec(line);
         m3 = re3.exec(line);
@@ -202,21 +202,21 @@ function processGeeohGoXML(dd) {
             name = m3[1];
         }
 
-		if (m4 !== null) {
-		    m4 = m4[1];
-			m4 = stripHtml(m4);
-			m4 = decodeHTMLEntities(m4);
-			var linkDesc = alUrl + " " + m4;
-			if (linkDesc.length > 1024) {
-				linkDesc = linkDesc.substr(0, 1021) + "...";
-			}
-			line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
+	if (m4 !== null) {
+		m4 = m4[1];
+		m4 = stripHtml(m4);
+		m4 = decodeHTMLEntities(m4);
+		var linkDesc = alUrl + " " + m4;
+		if (linkDesc.length > 1024) {
+			linkDesc = linkDesc.substr(0, 1021) + "...";
+		}
+		line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 
-			output.push(line);
-			coords = null;
-			name = null;
-			m4 = null;
-			m5 = null;
+		output.push(line);
+		coords = null;
+		name = null;
+		m4 = null;
+		m5 = null;
         }
     }
     updateView(output);
