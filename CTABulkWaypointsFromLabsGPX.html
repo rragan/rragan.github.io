@@ -101,6 +101,10 @@ function processXML(dd) {
         	descMode = true;
         }
 
+        if(line.indexOf("groundspeak:long_description html="True">") >= 0) {
+        	line=line.replace(/\s*<groundspeak:long_description html="True">.*Waypoint Description/g, "");
+        >
+
         if(descMode) {
          	if(line.indexOf("\</groundspeak:long_description") >= 0 ) {
 				line=line.replace(/\s*<\/groundspeak:long_description>\s*/g,"");
