@@ -61,7 +61,8 @@ async function getZipFilesContent(data) {
 }
 
 function processXML(dd) {
-    var lines = dd.split('\n');
+    var lines = dd.replace(/\n\n/g,"\n");
+    lines = lines.split('\n');
     var line = '';
     var m4 = null;
     var m5 = null;
