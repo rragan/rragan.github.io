@@ -138,6 +138,7 @@ function processXML(dd) {
 			m4 = m4.replace(/https:\/\/.*Question/,"Question");
 			m4= m4.replace(/Adventure Lab Descriptions.*/,"");
 			m4 = m4.replace(/Award Information.*/,"");
+			m4 = m4.replace(/Award Message.*/,"");
 			var linkDesc = url + " " + m4;
 			if (linkDesc.length > 1024) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
