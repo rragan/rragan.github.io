@@ -108,11 +108,11 @@ function processWpt(wpt) {
 				m4 = stripHtml(m4);
 				m4 = decodeHTMLEntities(m4);
 			}
-			m4 = m4.replace(/.*Waypoint Description/,"");
-			m4 = m4.replace(/https:\/\/.*Question/,"Question");
-			m4= m4.replace(/Adventure Lab Descriptions.*/,"");
-			m4 = m4.replace(/Award Information.*/,"");
-			m4 = m4.replace(/Award Message.*/,"");
+			m4 = m4.replace(/.*Waypoint Description/gm,"WPPD");
+			m4 = m4.replace(/https:\/\/.*Question/gm,"QQQQQ");
+			m4= m4.replace(/Adventure Lab Descriptions.*/gm,"AALD");
+			m4 = m4.replace(/Award Information.*/gm,"AII");
+			m4 = m4.replace(/Award Message.*/gm,"AAM");
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
