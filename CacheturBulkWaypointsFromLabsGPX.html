@@ -78,10 +78,10 @@ function processXML(dd) {
 }
 
 function processWpt(wpt) {
-		var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
-		var re3 = /<groundspeak:name>(.*)<\/groundspeak:name>/g;
-		var re5 = /<url>(.*)<\/url>/g;
-		var re4 = /<groundspeak:long_description html=".*">(.*)<\/groundspeak:long_description>/g;
+		var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/gm;
+		var re3 = /<groundspeak:name>(.*)<\/groundspeak:name>/gm;
+		var re5 = /<url>(.*)<\/url>/gm;
+		var re4 = /<groundspeak:long_description html=".*">(.*)<\/groundspeak:long_description>/gm;
 		var m2 = re2.exec(wpt);
 
 		if (m2 !== null) {
@@ -108,11 +108,13 @@ function processWpt(wpt) {
 				m4 = stripHtml(m4);
 				m4 = decodeHTMLEntities(m4);
 			}
-			m4 = m4.replace(/.*Waypoint Description/gm,"WPPD");
-			m4 = m4.replace(/https:\/\/.*Question/gm,"QQQQQ");
-			m4= m4.replace(/Adventure Lab Descriptions.*/gm,"AALD");
-			m4 = m4.replace(/Award Information.*/gm,"AII");
+			m4 = m4.replace(/.*Waypoint Description/gm,"");
+			m4 = m4.replace(/https:\/\/.*Question/gm,"");
 			m4 = m4.replace(/Award Message.*/gm,"AAM");
+			m4 = m4.replace(/Award Information.*/gm,"@@@@");
+			m4= m4.replace(/Adventure Lab Descriptions.+@@@@/gm,"");
+			//m4 = m4.replace(/Award Information.*/gm,"AII");
+			//m4 = m4.replace(/Award Message.*/gm,"AAM");
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
