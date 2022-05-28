@@ -9,17 +9,18 @@
 <body>
 <h2>Generate Cachetur bulk waypoints for labs from GPX</h2>
 <h3>Choose a GPX file or zipped GPX file. Handles Cachly, GeeohGo and labs2gpx files.</h3>
-<input type="file" id="file" name="file" />&nbsp;&nbsp;<span id="linecount"></span>
+<input type="file" id="file" name="file" />&nbsp;&nbsp;Just show link:<input id="justLink" type="checkbox"> <span id="linecount"></span>
 <br/>
 <textarea id="list" rows="25" cols="80"></textarea>
 <br><b>Reload page to run again</b>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"></script>
 <script type="text/javascript">
+
 var textArea = document.createElement('area');
 var output = [];
+var coords = null;
 var numLines = 0;
-var skippingToLab = false;
 var geeohGo = false;
 
 $("#file").on("change", function(evt) {
@@ -61,100 +62,75 @@ async function getZipFilesContent(data) {
 }
 
 function processXML(dd) {
-    var lines = dd.replace(/\n\n/g,"\n");
-    lines = lines.split('\n');
+	var lines = dd.replace(/\n/g," ");
+	var wpts = lines.split('<wpt ');
     var line = '';
-    var m4 = null;
-    var m5 = null;
-    var name = null;
     var url = "";
-    var descFull = "";
-    descDone = false;
-    var descMode = false;
-	for (var i = 0; i < lines.length; i++) {
-	    var re2 = /<wpt lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
-	    var re3 = /<groundspeak:name>(.*)<\/groundspeak:name>/g;
-	    var re5 = /<url>(.*)<\/url>/g;
-		line = lines[i];
-		if (line.indexOf("creator=\"Geooh") >= 0) {
-			processGeeohGoXML(lines);
+    if (lines.indexOf("<author>Geooh</author>") >= 0) {
+		processGeeohGoXML(lines);
+	} else {
+		for (var j=0; j < wpts.length; j++) {
+			var theWpts = wpts[j];
+			processWpt(theWpts);
 		}
-		var parts = line.split(/<\/wpt>/);
-		if (parts.length > 1) {
-			line = parts[0]; // get first part up to /wpt
-			var rest = parts.slice(1);
-			rest = rest.join('');
-			lines[i+1] = rest + lines[i+1];
-		}
-		if (line.indexOf("<type>Geocache|") >= 0 && line.indexOf("Lab") < 0) {
-			skippingToLab = true;
-			coords= null;
-		}
-		if (skippingToLab) {
-			continue;
-		}
-        var m2 = re2.exec(line);
-        var m3 = re3.exec(line);
-        var m5 = re5.exec(line);
+		updateView(output);
+	}
+}
 
-        if(line.indexOf("<groundspeak:long_description") >= 0) {
-        	line=line.replace(/\s*<groundspeak:long_description html="False">\s*/g, "");
-        	line = line.trim();
-        	descMode = true;
-        }
+function processWpt(wpt) {
+		var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
+		var re3 = /<groundspeak:name>(.*)<\/groundspeak:name>/g;
+		var re5 = /<url>(.*)<\/url>/g;
+		var re4 = /<groundspeak:long_description html=".*">(.*)<\/groundspeak:long_description>/g;
+		var m2 = re2.exec(wpt);
 
-        if(line.indexOf("groundspeak:long_description html=\"True\">") >= 0) {
-        	line=line.replace(/\s*<groundspeak:long_description html="True">.*Waypoint Description/g, "");
-        }
+		if (m2 !== null) {
+			var m4 = null;
+			var name = null;
+			var url = "";
+			line = wpt.replace(/\r/g," ");
 
-        if(descMode) {
-         	if(line.indexOf("\</groundspeak:long_description") >= 0 ) {
-				line=line.replace(/\s*<\/groundspeak:long_description>\s*/g,"");
-				descFull += line;
-				descMode = false;
-				m4 = descFull;
-				descFull = "";
-			} else {
-				descFull += line.trim();
+			var m3 = re3.exec(line);
+			var m4 = re4.exec(line);
+			var m5 = re5.exec(line);
+			if (m2 !== null) {
+				var lat = m2[1];
+				var lon = m2[2];
+				coords = lat + "," + lon;
 			}
-		}
-
-        if (m2 !== null) {
-            var lat = m2[1];
-            var lon = m2[2];
-            var coords = lat + "," + lon;
-        }
-        if (m3 !== null) {
-            name = m3[1];
-        }
-        if (m5 !== null) {
-            url = m5[1];
-        }
-
-		if ((name !== null) && (coords!== null) && (m4!== null) && (url !== null)) {
-			m4 = stripHtml(m4);
-			m4 = decodeHTMLEntities(m4);
-			// Strip out excess from labs2gpx HTML. Cachetur limit is 1024 chars.
+			if (m3 !== null) {
+				name = m3[1];
+			}
+			if (m5 !== null) {
+				url = m5[1];
+			}
+			if ((name !== null) && (coords!== null) && (m4!== null) && (url !== null)) {
+				m4 = stripHtml(m4);
+				m4 = decodeHTMLEntities(m4);
+			}
 			m4 = m4.replace(/.*Waypoint Description/,"");
 			m4 = m4.replace(/https:\/\/.*Question/,"Question");
 			m4= m4.replace(/Adventure Lab Descriptions.*/,"");
 			m4 = m4.replace(/Award Information.*/,"");
 			m4 = m4.replace(/Award Message.*/,"");
-			var linkDesc = url + " " + m4;
+			var linkDesc;
+			if (document.getElementById('justLink').checked) {
+				linkDesc = url;
+			} else {
+				linkDesc = url + " " + m4;
+			}
 			if (linkDesc.length > 1024) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
 			}
-			line = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
-			output.push(line);
+			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
+			output.push(bulkLine);
 			numLines++;
 			coords = null;
 			name = null;
 			m4 = null;
 			m5 = null;
-        }
+		}
 
-    }
-    updateView(output);
 }
 
 function processGeeohGoXML(dd) {
@@ -166,7 +142,7 @@ function processGeeohGoXML(dd) {
     var alName = "";
     var alUrl = "";
     var line;
-	var lines = dd.join('');
+	var lines = dd;
 	lines = lines.replace(/\r/gm,"");
 	lines = lines.split(/<wpt /);
 
@@ -192,7 +168,6 @@ function processGeeohGoXML(dd) {
 		}
 
 		coords= null;
-
         m2 = re2.exec(line);
         m3 = re3.exec(line);
         m4 = re4.exec(line);
@@ -208,27 +183,32 @@ function processGeeohGoXML(dd) {
 
 		if (m4 !== null) {
 		    m4 = m4[1];
-			m4 = stripHtml(m4);
-			m4 = decodeHTMLEntities(m4);
-			var linkDesc = alUrl + " " + m4;
-			if (linkDesc.length > 1024) {
-				linkDesc = linkDesc.substr(0, 1021) + "...";
-			}
-			line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
+				m4 = stripHtml(m4);
+				m4 = decodeHTMLEntities(m4);
+				var linkDesc = alUrl + " " + m4;
+				if (linkDesc.length > 1024) {
+					linkDesc = linkDesc.substr(0, 1021) + "...";
+				}
+				if (document.getElementById('justLink').checked) {
+					var linkDesc = alUrl;
+				} else {
+					var linkDesc = alUrl + " " + m4;
+				}
+				line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 
-			output.push(line);
-			numLines++;
-			coords = null;
-			name = null;
-			m4 = null;
-			m5 = null;
-        }
+				output.push(line);
+				numLines++;
+				coords = null;
+				name = null;
+				m4 = null;
+				m5 = null;
+       }
     }
     updateView(output);
 }
 
 function updateView(output) {
-    var lineMsg = numLines + " " + "waypoints generated. "
+    var lineMsg = numLines + " " + "waypoints generated. ";
     if (numLines > 300)  {
     	lineMsg += "cachetur only handles up to 300 lines.";
     }
@@ -237,10 +217,10 @@ function updateView(output) {
     var outarea = document.getElementById('list');
     // Remove last newline
     if (output) {
-		output[output.length -1] = output[output.length -1].trim();
-		outarea.value = output.join(' '),
-		outarea.setSelectionRange(0, 99999);
-	}
+			output[output.length -1] = output[output.length -1].trim();
+			outarea.value = output.join(' '),
+			outarea.setSelectionRange(0, 99999);
+		}
 }
 
 function decodeHTMLEntities(text) {
