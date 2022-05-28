@@ -127,6 +127,7 @@ function processWpt(wpt) {
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 			output.push(numLines + ":" + bulkLine);
 			numLines++;
+			textArea.innerHTML = "";
 			coords = null;
 			name = null;
 			m4 = null;
@@ -200,6 +201,7 @@ function processGeeohGoXML(dd) {
 
 				output.push(numLines + ":" + line);
 				numLines++;
+				textArea.innerHTML = "";
 				coords = null;
 				name = null;
 				m4 = null;
