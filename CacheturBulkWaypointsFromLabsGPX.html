@@ -112,7 +112,7 @@ function processWpt(wpt) {
 			m4 = m4.replace(/https:\/\/.*Question/gm,"");
 			m4 = m4.replace(/Award Message.*/gm,"AAM");
 			m4 = m4.replace(/Award Information.*/gm,"@@@@");
-			m4= m4.replace(/Adventure Lab Descriptions.+@@@@/gm,"");
+			m4= m4.replace(/Adventure Lab Descriptions.+@@@@/gm,"M4M4");
 			//m4 = m4.replace(/Award Information.*/gm,"AII");
 			//m4 = m4.replace(/Award Message.*/gm,"AAM");
 			var linkDesc;
@@ -125,7 +125,7 @@ function processWpt(wpt) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
 			}
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
-			output.push(bulkLine);
+			output.push(numLines + ":" + bulkLine);
 			numLines++;
 			coords = null;
 			name = null;
@@ -198,7 +198,7 @@ function processGeeohGoXML(dd) {
 				}
 				line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 
-				output.push(line);
+				output.push(numLines + ":" + line);
 				numLines++;
 				coords = null;
 				name = null;
