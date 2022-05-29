@@ -117,9 +117,9 @@ function processWpt(wpt) {
 			}
 			m4 = m4.replace(/.*Waypoint Description/gm,"");
 			m4 = m4.replace(/https:\/\/.*Question/gm,"");
-			m4 = m4.replace(/Award Message.*/gm,"");
-			m4 = m4.replace(/Award Information.*/gm,"@@@@");
-			m4= m4.replace(/Adventure Lab Descriptions.+@@@@/gm,"");
+			m4 = m4.replace(/Award Message.*$/gm,"");
+			m4 = m4.replace(/Award Information.*$/gm,"");
+			m4= m4.replace(/Adventure Lab Descriptions.+$/gm,"");
 			//m4 = m4.replace(/Award Information.*/gm,"");
 			//m4 = m4.replace(/Award Message.*/gm,"");
 			var linkDesc;
