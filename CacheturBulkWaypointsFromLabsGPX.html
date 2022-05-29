@@ -105,8 +105,14 @@ function processWpt(wpt) {
 			if (m5 !== null) {
 				url = m5[1];
 			}
+			/*
+			if (m4 !== null) {
+				var labDesc = m4[0].indexOf("&lt;/p&gt;&lt;hr /&gt;&lt;h5&gt;Adventure Lab Descriptions");
+				m4 = m4.substring(0,labDesc);
+			}
+			*/
 			if ((name !== null) && (coords!== null) && (m4!== null) && (url !== null)) {
-				m4 = stripHtml(m4);
+				m4 = stripHtml(m4[1]);
 				m4 = decodeHTMLEntities(m4);
 			}
 			m4 = m4.replace(/.*Waypoint Description/gm,"");
