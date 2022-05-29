@@ -12,6 +12,7 @@
 <input type="file" id="file" name="file" />&nbsp;&nbsp;Just show link:<input id="justLink" type="checkbox"> <span id="linecount"></span>
 <br/>
 <textarea id="list" rows="25" cols="80"></textarea>
+<div id="strip" style="display:none"></div>
 <br><b>Reload page to run again</b>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"></script>
@@ -110,11 +111,11 @@ function processWpt(wpt) {
 			}
 			m4 = m4.replace(/.*Waypoint Description/gm,"");
 			m4 = m4.replace(/https:\/\/.*Question/gm,"");
-			m4 = m4.replace(/Award Message.*/gm,"AAM");
+			m4 = m4.replace(/Award Message.*/gm,"");
 			m4 = m4.replace(/Award Information.*/gm,"@@@@");
-			m4= m4.replace(/Adventure Lab Descriptions.+@@@@/gm,"M4M4");
-			//m4 = m4.replace(/Award Information.*/gm,"AII");
-			//m4 = m4.replace(/Award Message.*/gm,"AAM");
+			m4= m4.replace(/Adventure Lab Descriptions.+@@@@/gm,"");
+			//m4 = m4.replace(/Award Information.*/gm,"");
+			//m4 = m4.replace(/Award Message.*/gm,"");
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
@@ -125,7 +126,7 @@ function processWpt(wpt) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
 			}
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
-			output.push(numLines + ":" + bulkLine);
+			output.push(bulkLine);
 			numLines++;
 			textArea.innerHTML = "";
 			coords = null;
@@ -199,7 +200,7 @@ function processGeeohGoXML(dd) {
 				}
 				line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 
-				output.push(numLines + ":" + line);
+				output.push(line);
 				numLines++;
 				textArea.innerHTML = "";
 				coords = null;
@@ -235,8 +236,11 @@ function decodeHTMLEntities(text) {
 }
 
 function stripHtml(text) {
-  textArea.innerHTML = text;
-  return textArea.textContent;
+  var stripDiv = document.getElementById('strip');
+  stripDiv.innerHTML = text;
+  var textpart = stripDiv.textContent;
+  stripDiv.innerHTML = "";
+  return textpart;
 }
 
 </script>
