@@ -12,7 +12,6 @@
 <input type="file" id="file" name="file" />&nbsp;&nbsp;Just show link:<input id="justLink" type="checkbox"> <span id="linecount"></span>
 <br/>
 <textarea id="list" rows="25" cols="80"></textarea>
-<div id="strip" style="display:none"></div>
 <br><b>Reload page to run again</b>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.9.1/jszip.min.js"></script>
@@ -105,23 +104,16 @@ function processWpt(wpt) {
 			if (m5 !== null) {
 				url = m5[1];
 			}
-			/*
-			if (m4 !== null) {
-				var labDesc = m4[0].indexOf("&lt;/p&gt;&lt;hr /&gt;&lt;h5&gt;Adventure Lab Descriptions");
-				m4 = m4.substring(0,labDesc);
+			if ((name !== null) && (coords!== null) && (m4!== null) && (url !== null)) {
+				m4 = m4[1];
+				m4 = stripHtml(m4);
+				m4 = decodeHTMLEntities(m4);
 			}
-			*/
-			if ((name !== null) && (coords!== null) && (m4 !== null) && (url !== null)) {
-				var m4a = stripHtml(m4[1]);
-				m4a = decodeHTMLEntities(m4a);
-			}
-			m4a = m4a.replace(/.*Waypoint Description/g,"");
-			m4a = m4a.replace(/https:\/\/.*Question/g,"");
-			m4a = m4a.replace(/Award Information.*$/g,"");
-			m4a = m4a.replace(/Award Message.*$/g,"");
-			m4a= m4a.replace(/Adventure Lab Descriptions.*$/g,"");
-			//m4 = m4.replace(/Award Information.*/gm,"");
-			//m4 = m4.replace(/Award Message.*/gm,"");
+			m4 = m4.replace(/.*Waypoint Description/gm,"");
+			m4 = m4.replace(/https:\/\/.*Question/gm,"");
+			m4 = m4.replace(/Award Information.*/gm,"");
+			m4 = m4.replace(/Award Message.*/gm,"");
+			m4= m4.replace(/Adventure Lab Descriptions.*$/gm,"");
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
@@ -132,7 +124,7 @@ function processWpt(wpt) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
 			}
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
-			output.push(bulkLine);
+			output.push(numLines + ":" + bulkLine);
 			numLines++;
 			textArea.innerHTML = "";
 			coords = null;
@@ -206,7 +198,7 @@ function processGeeohGoXML(dd) {
 				}
 				line = alName + ": " + decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 
-				output.push(line);
+				output.push(numLines + ":" + line);
 				numLines++;
 				textArea.innerHTML = "";
 				coords = null;
@@ -242,11 +234,8 @@ function decodeHTMLEntities(text) {
 }
 
 function stripHtml(text) {
-  var stripDiv = document.getElementById('strip');
-  stripDiv.innerHTML = text;
-  var textpart = stripDiv.textContent;
-  stripDiv.innerHTML = "";
-  return textpart;
+  textArea.innerHTML = text;
+  return textArea.textContent;
 }
 
 </script>
