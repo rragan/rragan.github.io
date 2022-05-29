@@ -111,15 +111,15 @@ function processWpt(wpt) {
 				m4 = m4.substring(0,labDesc);
 			}
 			*/
-			if ((name !== null) && (coords!== null) && (m4!== null) && (url !== null)) {
+			if ((name !== null) && (coords!== null) && (m4 !== null) && (url !== null)) {
 				m4 = stripHtml(m4[1]);
 				m4 = decodeHTMLEntities(m4);
 			}
-			m4 = m4.replace(/.*Waypoint Description/gm,"");
-			m4 = m4.replace(/https:\/\/.*Question/gm,"");
-			m4 = m4.replace(/Award Message.*$/gm,"");
-			m4 = m4.replace(/Award Information.*$/gm,"");
-			m4= m4.replace(/Adventure Lab Descriptions.+$/gm,"");
+			m4 = m4.replace(/.*Waypoint Description/g,"");
+			m4 = m4.replace(/https:\/\/.*Question/g,"");
+			m4 = m4.replace(/Award Information.*$/g,"");
+			m4 = m4.replace(/Award Message.*$/g,"");
+			m4= m4.replace(/Adventure Lab Descriptions.*$/g,"");
 			//m4 = m4.replace(/Award Information.*/gm,"");
 			//m4 = m4.replace(/Award Message.*/gm,"");
 			var linkDesc;
