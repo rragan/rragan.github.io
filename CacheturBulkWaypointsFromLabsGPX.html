@@ -111,7 +111,8 @@ function processWpt(wpt) {
 			}
 			m4 = m4.replace(/\n/,"");
 			m4 = m4.replace(/^.*Waypoint Description/g,"");
-			m4 = m4.substring(0, m4.indexOf("Award Information"));
+			var m4rest = m4.indexOf("Adventure Lab Descriptions");
+			m4 = m4.substring(0,m4rest);
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
