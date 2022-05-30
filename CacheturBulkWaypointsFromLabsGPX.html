@@ -24,49 +24,49 @@ var numLines = 0;
 var geeohGo = false;
 
 $("#file").on("change", function(evt) {
-    var files = evt.target.files;
-    if (files[0].name.endsWith(".zip")) {
-    	handleZipFile(files[0]);
-    } else {
-    	var reader = new FileReader();
-    	reader.onload = function(evt) {
-    		processXML(this.result);
-    	};
-    	reader.readAsText(files[0]);
-    }
+	var files = evt.target.files;
+	if (files[0].name.endsWith(".zip")) {
+		handleZipFile(files[0]);
+	} else {
+		var reader = new FileReader();
+		reader.onload = function(evt) {
+			processXML(this.result);
+		};
+		reader.readAsText(files[0]);
+	}
 
-    // Closure to capture the file information.
-    function handleZipFile(f) {
-        getZipFilesContent(f).then(dd => {
-            processXML(dd);
-        }).catch(e => {
-            console.log(e);
-        });
-    }
+	// Closure to capture the file information.
+	function handleZipFile(f) {
+		getZipFilesContent(f).then(dd => {
+			processXML(dd);
+		}).catch(e => {
+			console.log(e);
+		});
+	}
 });
 
 async function getZipFilesContent(data) {
-    const zipContent = [];
-    const promises = [];
-    const zip = (await JSZip.loadAsync(data));
-    zip.forEach(async (relativePath, file) => {
-        const promise = file.async('string');
-        promises.push(promise);
-        zipContent.push({
-            file: relativePath,
-            content: await promise
-        });
-    });
-    await Promise.all(promises);
-    return zipContent[0].content;
+	const zipContent = [];
+	const promises = [];
+	const zip = (await JSZip.loadAsync(data));
+	zip.forEach(async (relativePath, file) => {
+		const promise = file.async('string');
+		promises.push(promise);
+		zipContent.push({
+			file: relativePath,
+			content: await promise
+		});
+	});
+	await Promise.all(promises);
+	return zipContent[0].content;
 }
 
 function processXML(dd) {
 	var lines = dd.replace(/\n/g," ");
 	var wpts = lines.split('<wpt ');
-    var line = '';
-    var url = "";
-    if (lines.indexOf("<author>Geooh</author>") >= 0) {
+	var line = '';
+	var url = "";
+	if (lines.indexOf("<author>Geooh</author>") >= 0) {
 		processGeeohGoXML(lines);
 	} else {
 		for (var j=0; j < wpts.length; j++) {
@@ -81,7 +81,7 @@ function processWpt(wpt) {
 		var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/gm;
 		var re3 = /<groundspeak:name>(.*)<\/groundspeak:name>/gm;
 		var re5 = /<url>(.*)<\/url>/gm;
-		var re4 = /<groundspeak:long_description html=".*">(.*)<\/groundspeak:long_description>/gm;
+		var re4 = /<groundspeak:long_description html="(.*)">(.*)<\/groundspeak:long_description>/gm;
 		var m2 = re2.exec(wpt);
 
 		if (m2 !== null) {
@@ -104,15 +104,21 @@ function processWpt(wpt) {
 			if (m5 !== null) {
 				url = m5[1];
 			}
-			if ((name !== null) && (coords!== null) && (m4!== null) && (url !== null)) {
-				m4 = m4[1];
-				m4 = stripHtml(m4);
-				m4 = decodeHTMLEntities(m4);
+
+			m4[2] = m4[2].replace(/\n/,"");
+			if (m4[1] === "True") {
+				if ((name !== null) && (coords!== null) && (m4 !== null) && (url !== null)) {
+					m4 = stripHtml(m4[2]);
+					m4 = decodeHTMLEntities(m4);
+				}
+
+				m4 = m4.replace(/^.*Waypoint Description/g,"");
+				var m4rest = m4.indexOf("Adventure Lab Descriptions");
+				m4 = m4.substring(0,m4rest);
+			} else {
+				m4 = m4[2];
 			}
-			m4 = m4.replace(/\n/,"");
-			m4 = m4.replace(/^.*Waypoint Description/g,"");
-			var m4rest = m4.indexOf("Adventure Lab Descriptions");
-			m4 = m4.substring(0,m4rest);
+
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
@@ -135,24 +141,24 @@ function processWpt(wpt) {
 }
 
 function processGeeohGoXML(dd) {
-    var m1;
-    var m2;
-    var m3;
-    var m4 = null;
-    var m5 = null;
-    var alName = "";
-    var alUrl = "";
-    var line;
+	var m1;
+	var m2;
+	var m3;
+	var m4 = null;
+	var m5 = null;
+	var alName = "";
+	var alUrl = "";
+	var line;
 	var lines = dd;
 	lines = lines.replace(/\r/gm,"");
 	lines = lines.split(/<wpt /);
 
 	for (var i = 1; i < lines.length; i++) {
 		var re1 = /<urlname>(.*)<\/urlname>/g;
-	    var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
-	    var re3 = /<name>(.*)<\/name>/g;
-   		var re4 = /<desc>(.*)<\/desc>/g;
-   		var re5 = /<url>(.*)<\/url>/g;
+		var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/g;
+		var re3 = /<name>(.*)<\/name>/g;
+		var re4 = /<desc>(.*)<\/desc>/g;
+		var re5 = /<url>(.*)<\/url>/g;
 
 		line = lines[i];
 		m1 = re1.exec(line);
@@ -169,21 +175,21 @@ function processGeeohGoXML(dd) {
 		}
 
 		coords= null;
-        m2 = re2.exec(line);
-        m3 = re3.exec(line);
-        m4 = re4.exec(line);
+		m2 = re2.exec(line);
+		m3 = re3.exec(line);
+		m4 = re4.exec(line);
 
-        if (m2 !== null) {
-            var lat = m2[1];
-            var lon = m2[2];
-            var coords = lat + "," + lon;
-        }
-        if (m3 !== null) {
-            name = m3[1];
-        }
+		if (m2 !== null) {
+		 	var lat = m2[1];
+			var lon = m2[2];
+			var coords = lat + "," + lon;
+		}
+		if (m3 !== null) {
+			name = m3[1];
+		}
 
 		if (m4 !== null) {
-		    m4 = m4[1];
+			m4 = m4[1];
 				m4 = stripHtml(m4);
 				m4 = decodeHTMLEntities(m4);
 				var linkDesc = alUrl + " " + m4;
@@ -204,25 +210,25 @@ function processGeeohGoXML(dd) {
 				name = null;
 				m4 = null;
 				m5 = null;
-       }
-    }
-    updateView(output);
+	   }
+	}
+	updateView(output);
 }
 
 function updateView(output) {
-    var lineMsg = numLines + " " + "waypoints generated. ";
-    if (numLines > 300)  {
-    	lineMsg += "cachetur only handles up to 300 lines.";
-    }
-    var lineDiv = document.getElementById('linecount');
-    lineDiv.innerHTML = lineMsg;
-    var outarea = document.getElementById('list');
-    // Remove last newline
-    if (output) {
-			output[output.length -1] = output[output.length -1].trim();
-			outarea.value = output.join(' '),
-			outarea.setSelectionRange(0, 99999);
-		}
+	var lineMsg = numLines + " " + "waypoints generated. ";
+	if (numLines > 300)  {
+		lineMsg += "cachetur only handles up to 300 lines.";
+	}
+	var lineDiv = document.getElementById('linecount');
+	lineDiv.innerHTML = lineMsg;
+	var outarea = document.getElementById('list');
+	// Remove last newline
+	if (output) {
+		output[output.length -1] = output[output.length -1].trim();
+		outarea.value = output.join(' '),
+		outarea.setSelectionRange(0, 99999);
+	}
 }
 
 function decodeHTMLEntities(text) {
