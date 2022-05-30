@@ -111,11 +111,7 @@ function processWpt(wpt) {
 			}
 			m4 = m4.replace(/\n/,"");
 			m4 = m4.replace(/^.*Waypoint Description/g,"");
-			//m4 = m4.replace(/^.*Question/g,"");
 			m4 = m4.substring(0, m4.indexOf("Award Information"));
-			//m4 = m4.replace(/Award Information.*/g,"");
-			//m4 = m4.replace(/Award Message.*\n.*/g,"");
-			//m4= m4.replace(/Adventure Lab Descriptions.*$/g,"");
 			var linkDesc;
 			if (document.getElementById('justLink').checked) {
 				linkDesc = url;
