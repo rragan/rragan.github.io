@@ -102,7 +102,10 @@ function processWpt(wpt) {
 				name = m3[1];
 			}
 			if (m5 !== null) {
-				url = m5[1];
+				// Temporary. Omit url as Cachly has incorrect one.
+				if (m5[1].indexOf("coord.info") === -1 ) {
+					url = m5[1];
+				}
 			}
 
 			m4[2] = m4[2].replace(/\n/,"");
