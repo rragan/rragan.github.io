@@ -22,6 +22,7 @@ var output = [];
 var coords = null;
 var numLines = 0;
 var geeohGo = false;
+var shortName = "";
 
 $("#file").on("change", function(evt) {
 	var files = evt.target.files;
@@ -78,6 +79,7 @@ function processXML(dd) {
 }
 
 function processWpt(wpt) {
+		var re1 = /<name>(.*)<\/name>/gm;
 		var re2 = /lat=\"(-?[0-9\.]+)\"\s+lon=\"(-?[0-9\.]+)\"/gm;
 		var re3 = /<groundspeak:name>(.*)<\/groundspeak:name>/gm;
 		var re5 = /<url>(.*)<\/url>/gm;
@@ -89,10 +91,14 @@ function processWpt(wpt) {
 			var name = null;
 			var url = "";
 			line = wpt.replace(/\r/g," ");
-
+			
+			var m1 = re1.exec(line);
 			var m3 = re3.exec(line);
 			var m4 = re4.exec(line);
 			var m5 = re5.exec(line);
+			if (m1 != null) {
+				shortName = m1[1];
+			}
 			if (m2 !== null) {
 				var lat = m2[1];
 				var lon = m2[2];
@@ -132,6 +138,9 @@ function processWpt(wpt) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
 			}
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
+			if (shortName) {
+				bulkLine = shortName + " "  bulkline;
+			}
 			output.push(bulkLine);
 			numLines++;
 			textArea.innerHTML = "";
