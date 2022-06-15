@@ -138,7 +138,7 @@ function processWpt(wpt) {
 				linkDesc = linkDesc.substr(0, 1021) + "...";
 			}
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
-			if (shortName) {
+			if (shortName && shortName.indexOf("-") === -1) {
 				bulkLine = shortName + " " +  bulkLine;
 			}
 			output.push(bulkLine);
