@@ -139,7 +139,7 @@ function processWpt(wpt) {
 			}
 			var bulkLine = decodeHTMLEntities(name) + ';lab;' + coords + ';' + linkDesc  + '\n';
 			if (shortName) {
-				bulkLine = shortName + " "  bulkline;
+				bulkLine = shortName + " " +  bulkLine;
 			}
 			output.push(bulkLine);
 			numLines++;
