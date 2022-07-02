@@ -1,0 +1,14 @@
+<html>
+<body>
+<h3>Install Found Lab list bookmarklet</h3>
+<b>Use from /https://labs.geocaching.com/logs page. Copy list in new window to labs2gpx UUID field>b>
+<div id="bm"></div>
+</div>
+<script>
+var bookmarklet = "javascript:(function()%7Bvar%20ids%20%3D%20%5B%5D%3Bconst%20ff%20%3D%20document.querySelectorAll(%22li%5Bdata-adv-id%5D%22)%3Bfor%20(const%20fff%20of%20ff.values())%20%7Bvar%20f%20%3D%20fff.getAttribute('data-adv-id')%3Bif%20(!ids.includes(f))%20%7Bids.push(f)%3B%7D%7D%3Bvar%20myWindow%3Dwindow.open('')%3BmyWindow.document.write(%22%3Cdiv%20id%3D'hello'%3E%22%2B%20ids.join()%20%2B%20%22%3Cdiv%3E%22)%3Bvar%20range%20%3D%20myWindow.document.createRange()%3Brange.selectNode(myWindow.document.getElementById('hello'))%3BmyWindow.getSelection().addRange(range)%3BmyWindow.select()%7D)()";
+var linkedBM = document.getElementById("bm");
+linkedBM.innerHTML = "";
+var linkInstall = 'Drag to bookmarklet bar in browser: <a href="' + bookmarklet + '">' + ' FoundLabs</a>';
+linkedBM.insertAdjacentHTML('afterbegin', linkInstall);
+</script>
+</html>
