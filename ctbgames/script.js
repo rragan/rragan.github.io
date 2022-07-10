@@ -51,7 +51,7 @@ function start(){
             }
 
             if(document.getElementsByClassName('match').length==16){
-                alert("You won !!! ")
+                //alert("You won !!! ")
                 let button = document.createElement('button');
                 button.setAttribute('class' , 'btn btn-warning');
                 let node= document.createTextNode("You won!!! Moves "+moves);
