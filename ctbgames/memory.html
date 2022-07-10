@@ -3,28 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" 0="">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
     <title>Spot the Lackey Game</title>
 
-    <script src="script.js"></script>
+    <script src="static/script.js"></script>
     <style>
         .imgdiv{
             position: relative;
             display: inline-block;
-            width:150px;
-            height: 150px;
-            line-height: 150px;
+            width:140px;
+            height: 140px;
+            line-height: 140px;
             font-size: 20px;
             padding: 10px;
             text-align: center;
             border: 2px solid black;
             cursor: pointer;
-        }
-
-        img{
-            width:120px;
-            height: 120px;
-            padding: 10px;;
         }
 
         .hide{
@@ -40,9 +34,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Spot the Lackey game</h1>
+        <img src="https://www.thegba.net/wordpress/wp-content/uploads/2019/06/cropped-wordpress_top_01.jpg" width="500" />
 
-        <button class="btn btn-success" onclick="start()">Start game</button><br><br>
+        <h1>Spot the Lackey game  <button class="btn btn-success" onclick="start()">Start game</button></h1>
+
         <div id="score"></div>
         <div id="boardgame"></div>
     </div>
