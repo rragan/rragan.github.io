@@ -1,5 +1,5 @@
-availableImages=['Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.png','Images/Moun10Bike.png','Images/MissJenn.png','Images/gearguru.png',
-'Images/Justin.png','Images/signal.png','Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.png','Images/Moun10Bike.png','Images/MissJenn.png',
+availableImages=['Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.PNG','Images/Moun10Bike.png','Images/MissJenn.png','Images/gearguru.png',
+'Images/Justin.png','Images/signal.png','Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.PNG','Images/Moun10Bike.png','Images/MissJenn.png',
 'Images/gearguru.png','Images/Justin.png','Images/signal.png']
 
 function start(){
