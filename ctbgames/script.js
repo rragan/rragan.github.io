@@ -1,5 +1,5 @@
-availableImages=['Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.PNG','Images/Moun10Bike.png','Images/MissJenn.png','Images/gearguru.png',
-'Images/Justin.png','Images/signal.png','Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.PNG','Images/Moun10Bike.png','Images/MissJenn.png',
+availableImages=['Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.png','Images/Moun10Bike.png','Images/MissJenn.png','Images/gearguru.png',
+'Images/Justin.png','Images/signal.png','Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.png','Images/Moun10Bike.png','Images/MissJenn.png',
 'Images/gearguru.png','Images/Justin.png','Images/signal.png']
 
 function start(){
@@ -57,10 +57,14 @@ function start(){
                 let node= document.createTextNode("You won!!! Moves "+moves);
                 button.appendChild(node)
                 document.getElementById('score').appendChild(button)
+                delay(3000).then(() => window.location.href="https://vimeo.com/729049750/9f97cf3faf");
             }
 
             if(flag==0)
             currImg.classList.add('showimg');
         })
     }
+    function delay(time) {
+	  return new Promise(resolve => setTimeout(resolve, time));
+	}
 }
