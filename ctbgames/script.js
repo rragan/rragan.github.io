@@ -4,6 +4,10 @@ availableImages=['Images/Bryan.png','Images/FrauPotter.png','Images/RockChalk.PN
 
 function start(){
     let moves =0;
+    var mySpan = document.getElementById('message');
+    mySpan.style.display = "";
+    var btn = document.getElementById('start');
+    btn.style.display = "none";
     const maindiv = document.getElementById("boardgame");
     while (maindiv.firstChild) {
         maindiv.removeChild(maindiv.lastChild);
