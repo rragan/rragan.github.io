@@ -57,7 +57,7 @@ function start(){
                 let node= document.createTextNode("You won!!! Moves "+moves);
                 button.appendChild(node)
                 document.getElementById('score').appendChild(button)
-                delay(3000).then(() => window.location.href="https://vimeo.com/729049750/9f97cf3faf");
+                delay(3000).then(() => window.location.href="CTBWow1.html");
             }
 
             if(flag==0)
