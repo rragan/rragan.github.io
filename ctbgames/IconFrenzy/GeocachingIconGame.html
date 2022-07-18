@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<!-- http://eugmill.com/blog/2014/03/28/custom-javascript-events-with-2048/ -->
+
+
+<style>
+    body { background: #ddd; }</style>
+
+		<title>Icon Frenzy - GBA</title>
+	</head>
+	<body>
+
+		<div class="container">
+            <div id="page-container">
+
+<div class="page-header">
+    <h1>Icon Frenzy</h1>
+</div>
+<div class="page-content text-center">
+    <a class="restart-button">New Game</a>
+    <div class="heading">
+      <div class="scores-container">
+        <div class="score-container">0</div>
+        <div class="best-container">0</div>
+      </div>
+    </div>
+
+    <div class="game-container">
+      <div class="game-message">
+        <p></p>
+        <div class="lower">
+	        <a class="keep-playing-button">Keep going</a>
+          <a class="retry-button">Try again</a>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <div class="tile-container">
+
+      </div>
+    </div>
+
+    <p class="game-explanation">
+      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> (or drag if touch screen) to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
+    </p>
+    <hr>
+    <p>
+    Based on 2048 created by Gabriele Cirulli and adapted from a cachetur.no version.
+    </p>
+</div>
+
+<script src="js/bind_polyfill.js"></script>
+<script src="js/classlist_polyfill.js"></script>
+<script src="js/animframe_polyfill.js"></script>
+<script src="js/keyboard_input_manager.js"></script>
+<script src="js/html_actuator.js"></script>
+<script src="js/grid.js"></script>
+<script src="js/tile.js"></script>
+<script src="js/local_storage_manager.js"></script>
+<script src="js/game_manager.js"></script>
+<script src="js/application.js"></script>
+                <div class="clearfix"></div>
+            </div>
+		</div> <!-- /main container -->
+
+        <div class="hidden-lg hidden-md hidden-sm">
+            <p>&nbsp; </p>
+            <p>&nbsp; </p>
+            <p>&nbsp; </p>
+        </div>
+
+
+
+		<div id="footer">
+			<div class="container-fluid">
+
+				<div class="row">
+					<div class="col-md-9 col-sm-9">
+                        						<span class="text-muted">Open source software in use: <span class="hidden-xs"><a href="http://twitter.github.com/bootstrap/" target="_blank">Bootstrap</a></span><br />
+
+                                Geocaching Cache Type Icons © Groundspeak, Inc. DBA Geocaching HQ. All rights reserved. Used with permission.<br/></span></span>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>
