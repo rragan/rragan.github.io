@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+    <title>Spot the Lackey Game</title>
+
+    <script src="script.js"></script>
+    <style>
+        .imgdiv{
+            position: relative;
+            display: inline-block;
+            width:140px;
+            height: 140px;
+            line-height: 140px;
+            font-size: 20px;
+            padding: 10px;
+            text-align: center;
+            border: 2px solid black;
+            cursor: pointer;
+        }
+
+        .hide{
+            padding: 10px;
+            visibility: hidden;
+        }
+
+        .match, .showimg{
+            visibility: visible !important;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="../GBALogo-384wide.jpg" />
+        <h2>Icon Frenzy:  <img src="img/2.png" width="55"/><img src="img/4.png" width="55"/><img src="img/8.png" width="55"/><img src="img/16.png" width="55"/><img src="img/32.png" width="55"/></h2>
+        <span id="message">A sliding puzzle game to earn icon levels.
+        How many to do you want to try for?</span>
+        <div><b><a href="GeocachingIconGame.html?lvl=128">Easy: 7 icons</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="GeocachingIconGame.html?lvl=512">Medium: 9 icons</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="GeocachingIconGame.html?lvl=2048">Hard: 11 icons</a></b></div>
+
+        <div id="score"></div>
+        <div id="boardgame"></div>
+    </div>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-function GameManager(size, InputManager, Actuator, StorageManager) {
+function GameManager(size, InputManager, Actuator, StorageManager, lvl) {
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
@@ -18,6 +18,7 @@ GameManager.prototype.restart = function () {
   this.storageManager.clearGameState();
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
+  window.location.href="index.html";
 };
 
 // Keep playing after winning (allows going over 2048)
@@ -166,8 +167,13 @@ GameManager.prototype.move = function (direction) {
           // Update the score
           self.score += merged.value;
 
-          // The mighty 2048 tile
-          if (merged.value === 128) self.won = true;
+          // The winning tile
+          	   const urlParams = new URLSearchParams(window.location.search);
+		  	   var lvl = urlParams.get('lvl');
+		  	   if (lvl === undefined) lvl = 128;
+          if (merged.value == lvl) {
+			  self.won = true;
+		 }
         } else {
           self.moveTile(tile, positions.farthest);
         }
