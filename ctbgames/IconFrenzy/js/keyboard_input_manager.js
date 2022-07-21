@@ -62,10 +62,16 @@ KeyboardInputManager.prototype.listen = function () {
       }
     }
 
+    // Shift R key clears best score and restarts the game
+    if (modifiers && event.which === 82) {
+	      self.clearBest.call(self, event);
+    }
+
     // R key restarts the game
     if (!modifiers && event.which === 82) {
       self.restart.call(self, event);
     }
+
   });
 
   // Respond to button presses
@@ -135,6 +141,11 @@ KeyboardInputManager.prototype.restart = function (event) {
 KeyboardInputManager.prototype.keepPlaying = function (event) {
   event.preventDefault();
   this.emit("keepPlaying");
+};
+
+KeyboardInputManager.prototype.clearBest = function (event) {
+  event.preventDefault();
+  this.emit("clearBest");
 };
 
 KeyboardInputManager.prototype.bindButtonPress = function (selector, fn) {

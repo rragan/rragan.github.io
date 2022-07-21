@@ -9,12 +9,22 @@ function GameManager(size, InputManager, Actuator, StorageManager, lvl) {
   this.inputManager.on("move", this.move.bind(this));
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+  this.inputManager.on("clearBest", this.clearBest.bind(this));
 
   this.setup();
 }
 
 // Restart the game
 GameManager.prototype.restart = function () {
+  this.storageManager.clearGameState();
+  this.actuator.continueGame(); // Clear the game won/lost message
+  this.setup();
+  window.location.href="index.html";
+};
+
+// Clear best score and restart the game
+GameManager.prototype.clearBest = function () {
+  this.storageManager.setBestScore(0);
   this.storageManager.clearGameState();
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
@@ -93,6 +103,7 @@ GameManager.prototype.actuate = function () {
     score:      this.score,
     over:       this.over,
     won:        this.won,
+    clearBest:	this.clearBest,
     bestScore:  this.storageManager.getBestScore(),
     terminated: this.isGameTerminated()
   });
