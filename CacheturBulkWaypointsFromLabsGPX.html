@@ -120,9 +120,9 @@ function processWpt(wpt) {
 					m4 = stripHtml(m4[2]);
 					m4 = decodeHTMLEntities(m4);
 				}
-
-				m4 = m4.replace(/^.*Waypoint Description/g,"");
-				var m4rest = m4.indexOf("Adventure Lab Descriptions");
+				var m4rest = m4.indexOf("Waypoint Description");
+                                m4= m4.substring(m4rest+"Waypoint Description".length);
+				m4rest = m4.indexOf("Adventure Lab Descriptions");
 				m4 = m4.substring(0,m4rest);
 			} else {
 				m4 = m4[2];
