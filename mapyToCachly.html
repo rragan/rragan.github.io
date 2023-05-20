@@ -1,0 +1,105 @@
+<html><head>
+	<title>Convert mapy.cz export to Cachly Offline GPX</title>
+	<meta charset="utf-8">
+<body>
+<h3>Convert mapy.cz export to Cachly Offline GPX</h3>
+
+   <input type="file" id="files" name="files[]">
+<br>
+<br>
+	Output file download will be CachlyOfflineGPX.gpx
+<br>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+	var templatePrefix = '<?xml version="1.0" encoding="utf-8"?> <gpx xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" creator="Cachly" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0/1 http://www.groundspeak.com/cache/1/0/1/cache.xsd" xmlns="http://www.topografix.com/GPX/1/0">';
+	var templatePostfix = '</gpx>';
+	var template = ' <name>NAME5</name> <desc>Geocache file</desc><time>2023-05-19T16:46:46-07:00</time> <wpt lat="LAT" lon="LONG"> <time>2023-05-19T16:45:24-07:00</time> <name>NAME5</name> <desc>Offline by , Virtual Cache (1.0/1.0)</desc> <url>https://coord.info/NAME</url> <urlname>NAME3</urlname> <sym>Geocache</sym> <type>Geocache|Virtual Cache</type> <gsak:wptExtension xmlns:gsak="http://www.gsak.net/xmlv1/5"> <gsak:Code>NAME4</gsak:Code> <gsak:IsPremium>false</gsak:IsPremium> <gsak:FavPoints>0</gsak:FavPoints> <gsak:UserFlag>false</gsak:UserFlag> <gsak:DNF>false</gsak:DNF> <gsak:FTF>false</gsak:FTF> </gsak:wptExtension> <groundspeak:cache xmlns:groundspeak="http://www.groundspeak.com/cache/1/0" id="-410065" available="True" archived="False"> <groundspeak:name>NAME5</groundspeak:name> <groundspeak:placed_by>(null)</groundspeak:placed_by> <groundspeak:owner id="-1"></groundspeak:owner> <groundspeak:type>Virtual Cache</groundspeak:type> <groundspeak:container>(null)</groundspeak:container> <groundspeak:difficulty>1.0</groundspeak:difficulty> <groundspeak:terrain>1.0</groundspeak:terrain> <groundspeak:country></groundspeak:country> <groundspeak:state></groundspeak:state> <groundspeak:short_description html="False"></groundspeak:short_description> <groundspeak:long_description html="False">Desc</groundspeak:long_description> <groundspeak:encoded_hints></groundspeak:encoded_hints> </groundspeak:cache> </wpt>';
+	var namepart = '<groundspeak:name>NAME5</groundspeak:name>';
+
+    // Check for the various File API support.
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+
+        // Great success! All the File APIs are supported.
+
+    } else {
+
+        alert('The File APIs are not fully supported in this browser.');
+
+    }
+
+    var output = [];
+    var error = [];
+
+	function downloadString(text, fileName) {
+	  var blob = new Blob([text], { type: "application/gpx+xml" });
+	  var a = document.createElement('a');
+	  a.download = fileName;
+	  a.href = URL.createObjectURL(blob);
+	  a.dataset.downloadurl = ["application/gpx+xml", a.download, a.href].join(':');
+	  a.style.display = "none";
+	  document.body.appendChild(a);
+	  a.click();
+	  document.body.removeChild(a);
+	}
+
+    function handleFileSelect(evt) {
+    	var line = templatePrefix;
+        var files = evt.target.files; // FileList object
+
+        // files is a FileList of File objects.
+        for (var i = 0, f; f = files[i]; i++) {
+
+            var reader = new FileReader();
+            reader.onload = function(evt) {
+
+                var re = /<name>(GC[A-Z0-9]*)<\/name>/g;
+                var rewpt = /<wpt lat="([0-9\.]+)" lon="([\-0-9\.]+)">/g;
+                var re2 = /<name>(.*)<\/name>/g;
+
+                // By lines
+
+                var lines = this.result.split('\n');
+
+                for (var i = 0; i < lines.length; i++) {
+                    lines[i] = lines[i].replace(/\&#039;/g, '\'');
+                    var m1 = rewpt.exec(lines[i]);
+                    var m2 = re2.exec(lines[i]);
+
+
+                    if (m1 !== null) { //get coords
+                        lat = m1[1];
+                        long = m1[2];
+                        m1 = null;
+                    }
+
+                    if (m2 !== null) { // get name
+                        poiName = m2[1];
+                        var result = template;
+                        result = result.replace("LAT", lat);
+                        result = result.replace("LONG", long);
+                        result = result.replace(/NAME5/g, poiName);
+                        m2 = null;
+                        line = line + result;
+                    }
+
+                }
+                line = line + templatePostfix;
+                downloadString(line, "CachlyOfflineGPX.gpx");
+            }
+
+            reader.readAsText(f);
+
+        }
+
+    }
+
+
+$(document).ready(function(){
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+});
+	</script>
+
+
+
+
+</body></html>
