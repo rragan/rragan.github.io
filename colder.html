@@ -1,4 +1,5 @@
 
+
 <!-------------  DO NOT REMOVE ---------------------
   Warmer/Colder (GC2M8BR) a geocache by WakeboardLanier
      http://coord.info/GC2M8BR (the cache)
@@ -15,18 +16,20 @@ Per the disclaimer above, I have adapted this code for use in http://coord.info/
 <head>
 <title>Warmer, Colder</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-<script type="text/javascript" src="tea.js"></script>
-<script type="text/javascript" src="latlon.js"></script>
-<script type="text/javascript" src="resizer.js"></script>
-<script type="text/javascript">
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnnzmm550Bo1McFJZ_MCaQ5IKha6TH8G8&callback=initMap">
+</script>
+<script type="text/javascript" src="https://rragan.github.io/tea.js"></script>
+<script type="text/javascript" src="https://rragan.github.io/latlon.js"></script>
+<script type="text/javascript" src="https://rragan.github.io/resizer.js"></script>
+
+
+<script>
 
 var WarmerColder = {
   map: null,
   infoWindow: null
 };
-
-
 
 /**
  * starting coords:xxxx
@@ -104,7 +107,7 @@ WarmerColder.openInfoWindow = function(marker) {
   WarmerColder.infoWindow.open(WarmerColder.map, marker);
 };
 
-/** 
+/**
  * This function returns Internet Explorer's major version number,
  * or 0 for others. It works by finding the "MSIE " string and
  * extracting the version number following the space, up to the decimal
@@ -125,7 +128,7 @@ function msieversion() {
  * Called only once on initial page load to initialize the map.
  */
 
-WarmerColder.init = function() {
+initMap = function() {
 
    if ( msieversion() > 0 && msieversion() <= 6 ) {
 	  msg = 'IE' + msieversion() + ' is not supported.  Please try IE8+, Firefox, Safari, or Chrome.';
@@ -135,17 +138,17 @@ WarmerColder.init = function() {
 	  // Create single instance of a Google Map.
 	  var centerLatLng = new google.maps.LatLng( centerLat, centerLng );
 
-	  WarmerColder.map = new google.maps.Map(document.getElementById('map-canvas'), {
+	  WarmerColder.map = new google.maps.Map(document.getElementById('google-maps-canvas'), {
 		zoom: initialZoom,
 		center: centerLatLng,
 		scaleControl: true,
 		mapTypeId: google.maps.MapTypeId.SATELLITE
 	  });
-  
+
 	  // Create a single instance of the InfoWindow object which will be shared
 	  // by all Map objects to display information to the user.
 	  WarmerColder.infoWindow = new google.maps.InfoWindow();
-  
+
 	  // Create a draggable marker
 	   var marker = new google.maps.Marker({
 		  map: WarmerColder.map,
@@ -177,12 +180,12 @@ var numTries = 0;
 </script>
 </head>
 
-<body onload="WarmerColder.init();">
+<body>
 <center><H1>Let's play a little game of <font color="red">Warmer</font>/<font color="blue">Colder</font>...</H1><br></center>
 <table align="center" cellpadding="10" cellspacing="4" border="4" width="80%" bgcolor="#8c9e63">
 <tr bgcolor="#C6E3C0">
 	<td style="padding:0px;">
-		<div id="map-canvas" style="width:600px; height:600px"></div>
+	<div style="overflow:hidden;max-width:100%;width:500px;height:500px;"><div id="google-maps-canvas" style="height:100%; width:100%;max-width:100%;"><iframe id="gm-iframe" style="height:100%;width:100%;border:0;" frameborder="0" src="https://www.google.com/maps/embed/v1/place?q=37.41,-122.05;&key=AIzaSyBnnzmm550Bo1McFJZ_MCaQ5IKha6TH8G8"></iframe></div><a class="" rel="noopener external" href="https://www.vpnhound.com/best-vpn/best-vpn-for-gaming/" target="_blank" id="ref-url">The VPN Hound Guide to gaming with a VPN</a></div>
 	</td>
 	<td valign="top">
 
@@ -238,7 +241,7 @@ GC8WC23 Warmer/Colder</B></a>
 <small>
 <!--
 Acknowledgements:
-<a href="http://www.movable-type.co.uk/scripts/latlong.html">Lat/Long utilities</a> and 
+<a href="http://www.movable-type.co.uk/scripts/latlong.html">Lat/Long utilities</a> and
 <a href="http://www.movable-type.co.uk/scripts/tea-block.html">Block TEA</a>&nbsp<i>© 2002-2010 Chris Veness</i>
 <br/>
 -->
