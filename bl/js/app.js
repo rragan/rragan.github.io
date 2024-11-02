@@ -249,7 +249,7 @@ function playAgain(){
 
 // @desciption for user to restart 
 function reload(){
-    window.location.href="http://rragan.atwebpages.com/bl/memory.html";
+    window.location.href="https://rragan.github.io/bl/memory.html";
 }
 
 
